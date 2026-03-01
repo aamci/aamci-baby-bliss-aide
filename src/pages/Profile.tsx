@@ -1,17 +1,19 @@
 import { User, Baby, Bell, Lock, CreditCard, LogOut, ChevronRight, Shield, Users, FileText } from "lucide-react";
-
-const menuItems = [
-  { icon: User, label: "Informations personnelles", desc: "Nom, email, téléphone" },
-  { icon: Baby, label: "Profils enfants", desc: "Emma · 8 mois" },
-  { icon: Users, label: "Co-parentalité", desc: "Inviter un co-parent" },
-  { icon: Bell, label: "Notifications", desc: "Push, email, SMS" },
-  { icon: Lock, label: "Sécurité", desc: "Mot de passe, biométrie, 2FA" },
-  { icon: FileText, label: "Documents médicaux", desc: "Coffre-fort numérique" },
-  { icon: CreditCard, label: "Abonnement", desc: "Gratuit · 7/10 questions IA restantes" },
-  { icon: Shield, label: "Confidentialité", desc: "RGPD, données de santé" },
-];
+import { useNavigate } from "react-router-dom";
 
 const Profile = () => {
+  const navigate = useNavigate();
+
+  const menuItems = [
+    { icon: Baby, label: "Profils enfants", desc: "Emma · 8 mois", path: "/child-profile" },
+    { icon: Users, label: "Co-parentalité", desc: "Inviter un co-parent", path: null },
+    { icon: Bell, label: "Notifications", desc: "Push, email, SMS", path: "/notification-settings" },
+    { icon: FileText, label: "Documents médicaux", desc: "Coffre-fort numérique", path: "/documents" },
+    { icon: Lock, label: "Sécurité", desc: "Mot de passe, biométrie, 2FA", path: null },
+    { icon: CreditCard, label: "Abonnement", desc: "Gratuit · 7/10 questions IA restantes", path: null },
+    { icon: Shield, label: "Confidentialité", desc: "RGPD, données de santé", path: null },
+  ];
+
   return (
     <div className="px-4 pt-6 pb-4 space-y-6">
       {/* Header */}
@@ -26,7 +28,7 @@ const Profile = () => {
       </div>
 
       {/* Premium CTA */}
-      <div className="medical-card-elevated bg-gradient-to-r from-primary/10 to-accent space-y-2">
+      <div className="medical-card-elevated bg-gradient-to-r from-primary/10 to-accent space-y-2 cursor-pointer active:scale-[0.98] transition-transform">
         <h3 className="font-bold text-sm text-foreground">Passez à Premium ✨</h3>
         <p className="text-xs text-muted-foreground">Questions IA illimitées, 5 Go de stockage, contenus exclusifs</p>
         <button className="bg-primary text-primary-foreground text-xs font-semibold px-4 py-2 rounded-xl mt-1">
@@ -37,7 +39,11 @@ const Profile = () => {
       {/* Menu */}
       <div className="space-y-1">
         {menuItems.map((item, i) => (
-          <button key={i} className="w-full flex items-center gap-3 p-3 rounded-xl hover:bg-muted transition-colors text-left">
+          <button
+            key={i}
+            onClick={() => item.path && navigate(item.path)}
+            className="w-full flex items-center gap-3 p-3 rounded-xl hover:bg-muted active:bg-muted/80 transition-colors text-left"
+          >
             <div className="w-9 h-9 rounded-xl bg-accent flex items-center justify-center">
               <item.icon className="w-4 h-4 text-accent-foreground" />
             </div>
@@ -51,7 +57,7 @@ const Profile = () => {
       </div>
 
       {/* Logout */}
-      <button className="w-full flex items-center gap-3 p-3 rounded-xl hover:bg-medical-light-red transition-colors text-left">
+      <button className="w-full flex items-center gap-3 p-3 rounded-xl hover:bg-medical-light-red active:bg-medical-light-red/80 transition-colors text-left">
         <div className="w-9 h-9 rounded-xl bg-medical-light-red flex items-center justify-center">
           <LogOut className="w-4 h-4 text-destructive" />
         </div>

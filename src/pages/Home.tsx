@@ -6,10 +6,10 @@ const childAge = "8 mois et 12 jours";
 const parentName = "Marie";
 
 const contentCards = [
-  { title: "Diversification alimentaire à 8 mois", tag: "Nutrition", icon: Apple, color: "bg-medical-light-green text-medical-green" },
-  { title: "Le sommeil de bébé : les bons réflexes", tag: "Sommeil", icon: Moon, color: "bg-medical-light-blue text-primary" },
-  { title: "Stimuler la motricité fine", tag: "Éveil", icon: Brain, color: "bg-medical-light-orange text-medical-orange" },
-  { title: "Quand consulter en urgence ?", tag: "Santé", icon: Heart, color: "bg-medical-light-red text-medical-red" },
+  { title: "Diversification alimentaire à 8 mois", tag: "Nutrition", icon: Apple, color: "bg-medical-light-green text-medical-green", slug: "diversification-alimentaire" },
+  { title: "Le sommeil de bébé : les bons réflexes", tag: "Sommeil", icon: Moon, color: "bg-medical-light-blue text-primary", slug: "sommeil-bebe" },
+  { title: "Stimuler la motricité fine", tag: "Éveil", icon: Brain, color: "bg-medical-light-orange text-medical-orange", slug: "diversification-alimentaire" },
+  { title: "Quand consulter en urgence ?", tag: "Santé", icon: Heart, color: "bg-medical-light-red text-medical-red", slug: "diversification-alimentaire" },
 ];
 
 const Home = () => {
@@ -28,14 +28,14 @@ const Home = () => {
             <p className="text-sm text-muted-foreground">Comment va {childName} aujourd'hui ?</p>
           </div>
         </div>
-        <button className="relative p-2">
+        <button className="relative p-2" onClick={() => navigate("/notifications")} aria-label="Notifications">
           <Bell className="w-5 h-5 text-muted-foreground" />
           <span className="absolute top-1.5 right-1.5 w-2 h-2 rounded-full bg-destructive" />
         </button>
       </div>
 
       {/* Child selector */}
-      <div className="medical-card flex items-center gap-3 bg-accent">
+      <button className="medical-card flex items-center gap-3 bg-accent w-full text-left" onClick={() => navigate("/child-profile")}>
         <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center">
           <Baby className="w-5 h-5 text-primary" />
         </div>
@@ -44,7 +44,7 @@ const Home = () => {
           <p className="text-xs text-muted-foreground">{childAge}</p>
         </div>
         <ChevronRight className="w-4 h-4 text-muted-foreground" />
-      </div>
+      </button>
 
       {/* Alerts */}
       <section className="space-y-3">
@@ -57,7 +57,10 @@ const Home = () => {
             <p className="font-semibold text-sm text-foreground">Visite du 9ème mois</p>
             <p className="text-xs text-muted-foreground">Dans 18 jours · Obligatoire</p>
           </div>
-          <button className="text-xs font-semibold text-primary bg-accent px-3 py-1.5 rounded-lg">
+          <button
+            className="text-xs font-semibold text-primary bg-accent px-3 py-1.5 rounded-lg active:scale-95 transition-transform"
+            onClick={() => navigate("/tracking")}
+          >
             Prendre RDV
           </button>
         </div>
@@ -70,7 +73,10 @@ const Home = () => {
             <p className="font-semibold text-sm text-foreground">Vaccin ROR</p>
             <p className="text-xs text-muted-foreground">Recommandé avant 12 mois</p>
           </div>
-          <button className="text-xs font-semibold text-primary bg-accent px-3 py-1.5 rounded-lg">
+          <button
+            className="text-xs font-semibold text-primary bg-accent px-3 py-1.5 rounded-lg active:scale-95 transition-transform"
+            onClick={() => navigate("/tracking")}
+          >
             Voir
           </button>
         </div>
@@ -88,8 +94,8 @@ const Home = () => {
           {contentCards.map((card, i) => (
             <div
               key={i}
-              className="medical-card min-w-[200px] flex-shrink-0 space-y-3 cursor-pointer hover:scale-[1.02] transition-transform"
-              onClick={() => navigate("/contents")}
+              className="medical-card min-w-[200px] flex-shrink-0 space-y-3 cursor-pointer hover:scale-[1.02] active:scale-[0.98] transition-transform"
+              onClick={() => navigate(`/article/${card.slug}`)}
             >
               <div className={`w-10 h-10 rounded-xl ${card.color} flex items-center justify-center`}>
                 <card.icon className="w-5 h-5" />
@@ -106,7 +112,7 @@ const Home = () => {
       {/* AI Assistant CTA */}
       <section>
         <div
-          className="medical-card-elevated bg-gradient-to-br from-primary/5 to-accent cursor-pointer space-y-3"
+          className="medical-card-elevated bg-gradient-to-br from-primary/5 to-accent cursor-pointer space-y-3 active:scale-[0.98] transition-transform"
           onClick={() => navigate("/assistant")}
         >
           <div className="flex items-center gap-3">
@@ -131,7 +137,7 @@ const Home = () => {
       {/* Weight mini chart */}
       <section className="space-y-3">
         <h2 className="text-base font-bold text-foreground">Suivi de {childName}</h2>
-        <div className="medical-card space-y-3" onClick={() => navigate("/tracking")}>
+        <div className="medical-card space-y-3 cursor-pointer active:scale-[0.98] transition-transform" onClick={() => navigate("/tracking")}>
           <div className="flex items-center justify-between">
             <p className="text-sm font-semibold text-foreground">Courbe de poids</p>
             <span className="text-xs text-muted-foreground">Dernière mesure : 7.8 kg</span>
@@ -151,6 +157,20 @@ const Home = () => {
           <button className="text-xs font-semibold text-primary flex items-center gap-1">
             Voir le suivi complet <ChevronRight className="w-3 h-3" />
           </button>
+        </div>
+      </section>
+
+      {/* Documents CTA */}
+      <section>
+        <div className="medical-card flex items-center gap-3 cursor-pointer active:scale-[0.98] transition-transform" onClick={() => navigate("/documents")}>
+          <div className="w-10 h-10 rounded-xl bg-accent flex items-center justify-center">
+            <span className="text-lg">📁</span>
+          </div>
+          <div className="flex-1">
+            <p className="font-semibold text-sm text-foreground">Documents médicaux</p>
+            <p className="text-xs text-muted-foreground">8 documents · 12.5 Mo utilisés</p>
+          </div>
+          <ChevronRight className="w-4 h-4 text-muted-foreground" />
         </div>
       </section>
     </div>
