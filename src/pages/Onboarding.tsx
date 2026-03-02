@@ -30,7 +30,7 @@ const Onboarding = () => {
 
   const handleNext = () => {
     if (current === slides.length - 1) {
-      navigate("/home");
+      navigate("/signup");
     } else {
       setCurrent(current + 1);
     }
@@ -41,7 +41,7 @@ const Onboarding = () => {
       {/* Skip */}
       <div className="flex justify-end p-4">
         <button
-          onClick={() => navigate("/home")}
+          onClick={() => navigate("/login")}
           className="text-sm text-muted-foreground font-medium"
         >
           Passer
@@ -88,9 +88,15 @@ const Onboarding = () => {
           className="w-full h-14 text-base font-semibold rounded-xl"
           style={{ boxShadow: "var(--shadow-button)" }}
         >
-          {current === slides.length - 1 ? "Commencer" : "Suivant"}
+          {current === slides.length - 1 ? "Créer mon compte" : "Suivant"}
           <ChevronRight className="w-5 h-5 ml-1" />
         </Button>
+
+        {current === slides.length - 1 && (
+          <button onClick={() => navigate("/login")} className="text-sm text-muted-foreground">
+            Déjà un compte ? <span className="text-primary font-semibold">Se connecter</span>
+          </button>
+        )}
       </div>
     </div>
   );
