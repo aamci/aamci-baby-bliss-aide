@@ -1,7 +1,7 @@
 import { useState, useRef, useEffect } from "react";
-import { Bot, Send, Mic, Info, AlertTriangle, Phone, ArrowLeft, RotateCcw } from "lucide-react";
+import { Bot, Send, Mic, Info, AlertTriangle, Phone, RotateCcw } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { useNavigate } from "react-router-dom";
+import { toast } from "sonner";
 
 type Message = {
   id: string;
@@ -9,8 +9,9 @@ type Message = {
   content: string;
   time: string;
   isUrgent?: boolean;
-  sources?: string[];
 };
+
+const CHAT_URL = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/chat`;
 
 const quickQuestions = [
   "Mon bébé a de la fièvre",
@@ -22,62 +23,96 @@ const quickQuestions = [
 
 const now = () => new Date().toLocaleTimeString("fr-FR", { hour: "2-digit", minute: "2-digit" });
 
-const initialMessages: Message[] = [
-  {
-    id: "1",
-    role: "assistant",
-    content: "Bonjour ! 👋 Je suis votre assistant santé pour Emma. Posez-moi vos questions sur la santé, l'éveil, la nutrition ou le sommeil de votre enfant. Je suis là 24h/24 !",
-    time: now(),
-  },
-];
+const URGENT_PATTERN = /fièvre.*(3 mois|nourrisson)|convulsion|détresse respiratoire|perte de conscience|urgence|inconscien|étouff/i;
 
 const Assistant = () => {
-  const navigate = useNavigate();
-  const [messages, setMessages] = useState<Message[]>(initialMessages);
+  const [messages, setMessages] = useState<Message[]>([
+    { id: "1", role: "assistant", content: "Bonjour ! 👋 Je suis votre assistant santé pour Emma. Posez-moi vos questions sur la santé, l'éveil, la nutrition ou le sommeil de votre enfant. Je suis là 24h/24 !", time: now() },
+  ]);
   const [input, setInput] = useState("");
   const [isTyping, setIsTyping] = useState(false);
   const [showInfo, setShowInfo] = useState(false);
   const scrollRef = useRef<HTMLDivElement>(null);
-  const inputRef = useRef<HTMLTextAreaElement>(null);
 
   useEffect(() => {
     scrollRef.current?.scrollTo({ top: scrollRef.current.scrollHeight, behavior: "smooth" });
   }, [messages, isTyping]);
 
-  const sendMessage = (text: string) => {
+  const sendMessage = async (text: string) => {
     if (!text.trim() || isTyping) return;
     const userMsg: Message = { id: Date.now().toString(), role: "user", content: text.trim(), time: now() };
-    setMessages((prev) => [...prev, userMsg]);
+    const newMessages = [...messages, userMsg];
+    setMessages(newMessages);
     setInput("");
     setIsTyping(true);
 
-    setTimeout(() => {
-      const isUrgent = /fièvre|convulsion|détresse|urgence|vomit|inconscien/i.test(text);
-      const response: Message = {
-        id: (Date.now() + 1).toString(),
-        role: "assistant",
-        time: now(),
-        isUrgent,
-        content: isUrgent
-          ? "⚠️ Les symptômes que vous décrivez nécessitent une attention médicale rapide. Si votre enfant a moins de 3 mois avec une fièvre supérieure à 38°C, contactez immédiatement votre médecin ou le SAMU.\n\nEn attendant :\n• Ne couvrez pas trop votre enfant\n• Proposez-lui à boire régulièrement\n• Surveillez son comportement\n\nEn cas de doute, consultez votre pédiatre ou médecin traitant."
-          : text.toLowerCase().includes("solide") || text.toLowerCase().includes("divers")
-            ? "La diversification alimentaire à 8 mois est une étape importante ! Voici quelques conseils :\n\n• Proposez des textures de plus en plus variées\n• Introduisez un aliment nouveau à la fois\n• Respectez le rythme de votre enfant\n• Les protéines animales : 10g/jour environ\n\nChaque enfant est unique, ne vous inquiétez pas s'il refuse certains aliments au début.\n\nEn cas de doute, consultez votre pédiatre ou médecin traitant."
-            : text.toLowerCase().includes("dent")
-              ? "Les poussées dentaires sont souvent inconfortables pour bébé. Voici comment soulager Emma :\n\n• Un anneau de dentition réfrigéré (pas congelé)\n• Massez doucement les gencives avec un doigt propre\n• Un gant de toilette humide et frais à mordiller\n• En cas de douleur importante, demandez à votre pédiatre\n\n⚠️ Évitez les colliers d'ambre (risque d'étranglement) et les gels gingivaux contenant de la lidocaïne.\n\nEn cas de doute, consultez votre pédiatre ou médecin traitant."
-              : text.toLowerCase().includes("dort") || text.toLowerCase().includes("sommeil") || text.toLowerCase().includes("nuit")
-                ? "Les troubles du sommeil à 8 mois sont très fréquents ! C'est souvent lié à l'angoisse de la séparation.\n\n• Maintenez un rituel de coucher régulier (15-20 min)\n• Couchez Emma entre 19h et 20h30\n• Favorisez un objet transitionnel (doudou)\n• Évitez les écrans au moins 1h avant le coucher\n• Si elle se réveille, rassurez-la brièvement sans la sortir du lit\n\nEn cas de doute, consultez votre pédiatre ou médecin traitant."
-                : "C'est une très bonne question ! À 8 mois, le développement d'Emma est en pleine accélération.\n\nJe vous recommande de :\n• Observer les réactions de votre enfant\n• Consulter nos contenus personnalisés dans l'onglet Contenus\n• Suivre le calendrier des visites obligatoires\n\nN'hésitez pas à poser d'autres questions, je suis là pour vous aider !\n\nEn cas de doute, consultez votre pédiatre ou médecin traitant.",
-        sources: isUrgent
-          ? ["Société Française de Pédiatrie, 2024", "HAS - Conduite à tenir devant une fièvre chez le nourrisson"]
-          : ["AFPA - Recommandations pédiatriques, 2024", "SFP - Guide pratique, 2024"],
-      };
-      setMessages((prev) => [...prev, response]);
-      setIsTyping(false);
-    }, 1500 + Math.random() * 1000);
+    let assistantContent = "";
+    const assistantId = (Date.now() + 1).toString();
+
+    try {
+      const apiMessages = newMessages
+        .filter(m => m.id !== "1")
+        .map(m => ({ role: m.role, content: m.content }));
+
+      const resp = await fetch(CHAT_URL, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY}`,
+        },
+        body: JSON.stringify({ messages: apiMessages }),
+      });
+
+      if (resp.status === 429) { toast.error("Trop de requêtes, réessayez dans un instant"); setIsTyping(false); return; }
+      if (resp.status === 402) { toast.error("Crédits IA épuisés"); setIsTyping(false); return; }
+      if (!resp.ok || !resp.body) throw new Error("Stream failed");
+
+      const reader = resp.body.getReader();
+      const decoder = new TextDecoder();
+      let buffer = "";
+
+      while (true) {
+        const { done, value } = await reader.read();
+        if (done) break;
+        buffer += decoder.decode(value, { stream: true });
+
+        let nl: number;
+        while ((nl = buffer.indexOf("\n")) !== -1) {
+          let line = buffer.slice(0, nl);
+          buffer = buffer.slice(nl + 1);
+          if (line.endsWith("\r")) line = line.slice(0, -1);
+          if (!line.startsWith("data: ")) continue;
+          const json = line.slice(6).trim();
+          if (json === "[DONE]") break;
+          try {
+            const parsed = JSON.parse(json);
+            const delta = parsed.choices?.[0]?.delta?.content;
+            if (delta) {
+              assistantContent += delta;
+              const isUrgent = URGENT_PATTERN.test(assistantContent);
+              setMessages(prev => {
+                const last = prev[prev.length - 1];
+                if (last?.id === assistantId) {
+                  return prev.map((m, i) => i === prev.length - 1 ? { ...m, content: assistantContent, isUrgent } : m);
+                }
+                return [...prev, { id: assistantId, role: "assistant", content: assistantContent, time: now(), isUrgent }];
+              });
+            }
+          } catch { /* partial JSON */ }
+        }
+      }
+    } catch (e) {
+      console.error(e);
+      // Fallback to local response
+      assistantContent = "Je suis temporairement indisponible. Veuillez réessayer dans quelques instants.\n\nEn cas d'urgence, appelez le 15 (SAMU).";
+      setMessages(prev => [...prev, { id: assistantId, role: "assistant", content: assistantContent, time: now() }]);
+    }
+
+    setIsTyping(false);
   };
 
   const newConversation = () => {
-    setMessages(initialMessages);
+    setMessages([{ id: "1", role: "assistant", content: "Bonjour ! 👋 Comment puis-je vous aider aujourd'hui ?", time: now() }]);
     setInput("");
   };
 
@@ -139,7 +174,6 @@ const Assistant = () => {
               >
                 {msg.content}
               </div>
-
               {msg.isUrgent && (
                 <div className="flex gap-2 mt-2">
                   <a href="tel:15" className="flex items-center gap-1.5 bg-destructive text-destructive-foreground px-3 py-2 rounded-xl text-xs font-semibold">
@@ -147,22 +181,12 @@ const Assistant = () => {
                   </a>
                 </div>
               )}
-
-              {msg.sources && msg.sources.length > 0 && (
-                <div className="mt-1">
-                  {msg.sources.map((s, i) => (
-                    <p key={i} className="text-[10px] text-muted-foreground">📎 {s}</p>
-                  ))}
-                </div>
-              )}
-
               <p className={`text-[10px] ${msg.role === "user" ? "text-right" : "text-left"} text-muted-foreground`}>
                 {msg.time}
               </p>
             </div>
           </div>
         ))}
-
         {isTyping && (
           <div className="flex justify-start animate-fade-in">
             <div className="bg-card border border-border rounded-2xl rounded-bl-md px-4 py-3 flex gap-1">
@@ -174,16 +198,11 @@ const Assistant = () => {
         )}
       </div>
 
-      {/* Input area */}
+      {/* Input */}
       <div className="bg-card border-t border-border px-4 pt-3 pb-3">
         <div className="flex gap-2 overflow-x-auto scrollbar-hide mb-3">
           {quickQuestions.map((q, i) => (
-            <button
-              key={i}
-              onClick={() => sendMessage(q)}
-              disabled={isTyping}
-              className="text-xs bg-accent text-accent-foreground px-3 py-1.5 rounded-full whitespace-nowrap border border-border hover:bg-primary hover:text-primary-foreground transition-colors disabled:opacity-50"
-            >
+            <button key={i} onClick={() => sendMessage(q)} disabled={isTyping} className="text-xs bg-accent text-accent-foreground px-3 py-1.5 rounded-full whitespace-nowrap border border-border hover:bg-primary hover:text-primary-foreground transition-colors disabled:opacity-50">
               {q}
             </button>
           ))}
@@ -194,29 +213,16 @@ const Assistant = () => {
           </button>
           <div className="flex-1 relative">
             <textarea
-              ref={inputRef}
               value={input}
               onChange={(e) => setInput(e.target.value.slice(0, 500))}
-              onKeyDown={(e) => {
-                if (e.key === "Enter" && !e.shiftKey) {
-                  e.preventDefault();
-                  sendMessage(input);
-                }
-              }}
+              onKeyDown={(e) => { if (e.key === "Enter" && !e.shiftKey) { e.preventDefault(); sendMessage(input); } }}
               placeholder="Posez votre question..."
               className="w-full bg-muted rounded-xl px-4 py-3 text-sm text-foreground placeholder:text-muted-foreground resize-none focus:outline-none focus:ring-2 focus:ring-ring max-h-24"
               rows={1}
             />
-            {input.length > 0 && (
-              <span className="absolute right-3 bottom-1 text-[10px] text-muted-foreground">{input.length}/500</span>
-            )}
+            {input.length > 0 && <span className="absolute right-3 bottom-1 text-[10px] text-muted-foreground">{input.length}/500</span>}
           </div>
-          <Button
-            size="icon"
-            onClick={() => sendMessage(input)}
-            disabled={!input.trim() || isTyping}
-            className="rounded-xl w-10 h-10 shrink-0"
-          >
+          <Button size="icon" onClick={() => sendMessage(input)} disabled={!input.trim() || isTyping} className="rounded-xl w-10 h-10 shrink-0">
             <Send className="w-4 h-4" />
           </Button>
         </div>

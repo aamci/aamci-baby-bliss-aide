@@ -1,12 +1,14 @@
-import { User, Baby, Bell, Lock, CreditCard, LogOut, ChevronRight, Shield, Users, FileText } from "lucide-react";
+import { User, Baby, Bell, Lock, CreditCard, LogOut, ChevronRight, Shield, Users, FileText, Heart, Settings } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+import PageTransition from "@/components/PageTransition";
 
 const Profile = () => {
   const navigate = useNavigate();
 
   const menuItems = [
     { icon: Baby, label: "Profils enfants", desc: "Emma · 8 mois", path: "/child-profile" },
-    { icon: Users, label: "Co-parentalité", desc: "Inviter un co-parent", path: null },
+    { icon: Users, label: "Co-parentalité", desc: "Inviter un co-parent", path: "/coparenting" },
+    { icon: Heart, label: "Contenus sauvegardés", desc: "Mes favoris", path: "/saved-contents" },
     { icon: Bell, label: "Notifications", desc: "Push, email, SMS", path: "/notification-settings" },
     { icon: FileText, label: "Documents médicaux", desc: "Coffre-fort numérique", path: "/documents" },
     { icon: Lock, label: "Sécurité", desc: "Mot de passe, biométrie, 2FA", path: null },
@@ -15,59 +17,87 @@ const Profile = () => {
   ];
 
   return (
-    <div className="px-4 pt-6 pb-4 space-y-6">
-      {/* Header */}
-      <div className="flex items-center gap-4">
-        <div className="w-16 h-16 rounded-full bg-primary flex items-center justify-center text-primary-foreground text-xl font-bold">
-          M
-        </div>
-        <div>
-          <h1 className="text-xl font-bold text-foreground">Marie Dupont</h1>
-          <p className="text-sm text-muted-foreground">marie.dupont@email.com</p>
-        </div>
-      </div>
-
-      {/* Premium CTA */}
-      <div className="medical-card-elevated bg-gradient-to-r from-primary/10 to-accent space-y-2 cursor-pointer active:scale-[0.98] transition-transform">
-        <h3 className="font-bold text-sm text-foreground">Passez à Premium ✨</h3>
-        <p className="text-xs text-muted-foreground">Questions IA illimitées, 5 Go de stockage, contenus exclusifs</p>
-        <button className="bg-primary text-primary-foreground text-xs font-semibold px-4 py-2 rounded-xl mt-1">
-          Découvrir l'offre
-        </button>
-      </div>
-
-      {/* Menu */}
-      <div className="space-y-1">
-        {menuItems.map((item, i) => (
-          <button
-            key={i}
-            onClick={() => item.path && navigate(item.path)}
-            className="w-full flex items-center gap-3 p-3 rounded-xl hover:bg-muted active:bg-muted/80 transition-colors text-left"
-          >
-            <div className="w-9 h-9 rounded-xl bg-accent flex items-center justify-center">
-              <item.icon className="w-4 h-4 text-accent-foreground" />
-            </div>
-            <div className="flex-1">
-              <p className="font-semibold text-sm text-foreground">{item.label}</p>
-              <p className="text-xs text-muted-foreground">{item.desc}</p>
-            </div>
-            <ChevronRight className="w-4 h-4 text-muted-foreground" />
+    <PageTransition>
+      <div className="px-4 pt-6 pb-4 space-y-6">
+        {/* Header */}
+        <div className="flex items-center gap-4">
+          <div className="w-16 h-16 rounded-full bg-primary flex items-center justify-center text-primary-foreground text-xl font-bold">
+            M
+          </div>
+          <div className="flex-1">
+            <h1 className="text-xl font-bold text-foreground">Marie Dupont</h1>
+            <p className="text-sm text-muted-foreground">marie.dupont@email.com</p>
+          </div>
+          <button className="w-9 h-9 rounded-xl bg-muted flex items-center justify-center" aria-label="Paramètres">
+            <Settings className="w-4 h-4 text-muted-foreground" />
           </button>
-        ))}
-      </div>
-
-      {/* Logout */}
-      <button className="w-full flex items-center gap-3 p-3 rounded-xl hover:bg-medical-light-red active:bg-medical-light-red/80 transition-colors text-left">
-        <div className="w-9 h-9 rounded-xl bg-medical-light-red flex items-center justify-center">
-          <LogOut className="w-4 h-4 text-destructive" />
         </div>
-        <p className="font-semibold text-sm text-destructive">Se déconnecter</p>
-      </button>
 
-      <p className="text-[10px] text-center text-muted-foreground">
-        BébéSanté v1.0 · Hébergement HDS · Données chiffrées AES-256
-      </p>
-    </div>
+        {/* Santé parent */}
+        <div className="medical-card space-y-3">
+          <h3 className="text-sm font-bold text-foreground">Informations santé du parent</h3>
+          <div className="grid grid-cols-2 gap-3 text-xs">
+            <div className="bg-muted rounded-xl p-3">
+              <p className="text-muted-foreground">Groupe sanguin</p>
+              <p className="font-semibold text-foreground mt-0.5">A+</p>
+            </div>
+            <div className="bg-muted rounded-xl p-3">
+              <p className="text-muted-foreground">Allergies</p>
+              <p className="font-semibold text-foreground mt-0.5">Aucune</p>
+            </div>
+            <div className="bg-muted rounded-xl p-3">
+              <p className="text-muted-foreground">Antécédents</p>
+              <p className="font-semibold text-foreground mt-0.5">Aucun</p>
+            </div>
+            <div className="bg-muted rounded-xl p-3">
+              <p className="text-muted-foreground">Médecin</p>
+              <p className="font-semibold text-foreground mt-0.5">Dr. Petit</p>
+            </div>
+          </div>
+        </div>
+
+        {/* Premium CTA */}
+        <div className="medical-card-elevated bg-gradient-to-r from-primary/10 to-accent space-y-2 cursor-pointer active:scale-[0.98] transition-transform">
+          <h3 className="font-bold text-sm text-foreground">Passez à Premium ✨</h3>
+          <p className="text-xs text-muted-foreground">Questions IA illimitées, 5 Go de stockage, contenus exclusifs</p>
+          <button className="bg-primary text-primary-foreground text-xs font-semibold px-4 py-2 rounded-xl mt-1">
+            Découvrir l'offre
+          </button>
+        </div>
+
+        {/* Menu */}
+        <div className="space-y-1">
+          {menuItems.map((item, i) => (
+            <button
+              key={i}
+              onClick={() => item.path && navigate(item.path)}
+              className="w-full flex items-center gap-3 p-3 rounded-xl hover:bg-muted active:bg-muted/80 transition-colors text-left"
+            >
+              <div className="w-9 h-9 rounded-xl bg-accent flex items-center justify-center">
+                <item.icon className="w-4 h-4 text-accent-foreground" />
+              </div>
+              <div className="flex-1">
+                <p className="font-semibold text-sm text-foreground">{item.label}</p>
+                <p className="text-xs text-muted-foreground">{item.desc}</p>
+              </div>
+              <ChevronRight className="w-4 h-4 text-muted-foreground" />
+            </button>
+          ))}
+        </div>
+
+        {/* Logout */}
+        <button className="w-full flex items-center gap-3 p-3 rounded-xl hover:bg-medical-light-red active:bg-medical-light-red/80 transition-colors text-left">
+          <div className="w-9 h-9 rounded-xl bg-medical-light-red flex items-center justify-center">
+            <LogOut className="w-4 h-4 text-destructive" />
+          </div>
+          <p className="font-semibold text-sm text-destructive">Se déconnecter</p>
+        </button>
+
+        <p className="text-[10px] text-center text-muted-foreground">
+          BébéSanté v1.0 · Hébergement HDS · Données chiffrées AES-256
+        </p>
+      </div>
+    </PageTransition>
   );
 };
 

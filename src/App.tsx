@@ -14,6 +14,11 @@ import Notifications from "./pages/Notifications";
 import Documents from "./pages/Documents";
 import ChildProfile from "./pages/ChildProfile";
 import NotificationSettings from "./pages/NotificationSettings";
+import Login from "./pages/Login";
+import Signup from "./pages/Signup";
+import ResetPassword from "./pages/ResetPassword";
+import CoParenting from "./pages/CoParenting";
+import SavedContents from "./pages/SavedContents";
 import AppLayout from "./components/AppLayout";
 import NotFound from "./pages/NotFound";
 
@@ -27,6 +32,9 @@ const App = () => (
       <BrowserRouter>
         <Routes>
           <Route path="/" element={<Onboarding />} />
+          <Route path="/login" element={<Login />} />
+          <Route path="/signup" element={<Signup />} />
+          <Route path="/reset-password" element={<ResetPassword />} />
           <Route element={<AppLayout />}>
             <Route path="/home" element={<Home />} />
             <Route path="/contents" element={<Contents />} />
@@ -39,6 +47,8 @@ const App = () => (
           <Route path="/documents" element={<Documents />} />
           <Route path="/child-profile" element={<ChildProfile />} />
           <Route path="/notification-settings" element={<NotificationSettings />} />
+          <Route path="/coparenting" element={<CoParenting />} />
+          <Route path="/saved-contents" element={<SavedContents />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
       </BrowserRouter>
