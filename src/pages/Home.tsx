@@ -1,10 +1,8 @@
 import { Bell, Bot, ChevronRight, Calendar, Syringe, Baby, Heart, Moon, Apple, Brain, Clock } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+import { useAuth } from "@/contexts/AuthContext";
+import { useChildren, useChildAge } from "@/hooks/useChildren";
 import PageTransition from "@/components/PageTransition";
-
-const childName = "Emma";
-const childAge = "8 mois et 12 jours";
-const parentName = "Marie";
 
 const contentCards = [
   { title: "Diversification alimentaire à 8 mois", tag: "Nutrition", icon: Apple, color: "bg-medical-light-green text-medical-green", slug: "diversification-alimentaire" },
@@ -13,13 +11,13 @@ const contentCards = [
   { title: "Quand consulter en urgence ?", tag: "Santé", icon: Heart, color: "bg-medical-light-red text-medical-red", slug: "diversification-alimentaire" },
 ];
 
-const upcomingRdv = [
-  { name: "Visite du 9ème mois", doctor: "Dr. Sophie Martin", date: "20 mars 2026", time: "10h30", type: "Pédiatre" },
-  { name: "Vaccin ROR", doctor: "Dr. Pierre Leroy", date: "15 juin 2026", time: "14h00", type: "Vaccination" },
-];
-
 const Home = () => {
   const navigate = useNavigate();
+  const { profile } = useAuth();
+  const { data: children, isLoading } = useChildren();
+  const firstChild = children?.[0];
+  const childAge = useChildAge(firstChild?.birth_date);
+  const parentName = profile?.first_name || "Parent";
 
   return (
     <PageTransition>
@@ -28,11 +26,13 @@ const Home = () => {
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-3">
             <div className="w-11 h-11 rounded-full bg-primary flex items-center justify-center text-primary-foreground font-bold text-sm">
-              {parentName[0]}
+              {parentName[0]?.toUpperCase() || "?"}
             </div>
             <div>
               <h1 className="text-lg font-bold text-foreground">Bonjour {parentName} 👋</h1>
-              <p className="text-sm text-muted-foreground">Comment va {childName} aujourd'hui ?</p>
+              <p className="text-sm text-muted-foreground">
+                {firstChild ? `Comment va ${firstChild.first_name} aujourd'hui ?` : "Ajoutez votre enfant pour commencer"}
+              </p>
             </div>
           </div>
           <button className="relative p-2" onClick={() => navigate("/notifications")} aria-label="Notifications">
@@ -42,42 +42,58 @@ const Home = () => {
         </div>
 
         {/* Child selector */}
-        <button className="medical-card flex items-center gap-3 bg-accent w-full text-left" onClick={() => navigate("/child-profile")}>
-          <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center">
-            <Baby className="w-5 h-5 text-primary" />
-          </div>
-          <div className="flex-1">
-            <p className="font-semibold text-sm text-foreground">{childName}</p>
-            <p className="text-xs text-muted-foreground">{childAge}</p>
-          </div>
-          <ChevronRight className="w-4 h-4 text-muted-foreground" />
-        </button>
+        {firstChild ? (
+          <button className="medical-card flex items-center gap-3 bg-accent w-full text-left" onClick={() => navigate("/child-profile")}>
+            <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center">
+              <Baby className="w-5 h-5 text-primary" />
+            </div>
+            <div className="flex-1 min-w-0">
+              <p className="font-semibold text-sm text-foreground">{firstChild.first_name}</p>
+              <p className="text-xs text-muted-foreground">{childAge}</p>
+            </div>
+            <ChevronRight className="w-4 h-4 text-muted-foreground" />
+          </button>
+        ) : (
+          <button
+            className="medical-card-elevated flex items-center gap-3 w-full text-left bg-gradient-to-r from-primary/5 to-accent"
+            onClick={() => navigate("/child-profile")}
+          >
+            <div className="w-10 h-10 rounded-full bg-primary flex items-center justify-center">
+              <Baby className="w-5 h-5 text-primary-foreground" />
+            </div>
+            <div className="flex-1">
+              <p className="font-semibold text-sm text-foreground">Ajouter votre enfant</p>
+              <p className="text-xs text-muted-foreground">Pour personnaliser le suivi</p>
+            </div>
+            <ChevronRight className="w-4 h-4 text-muted-foreground" />
+          </button>
+        )}
 
         {/* Alerts */}
         <section className="space-y-3">
           <h2 className="text-base font-bold text-foreground">À faire cette semaine</h2>
           <div className="medical-card flex items-center gap-3 border-l-4 border-medical-orange">
-            <div className="w-10 h-10 rounded-xl bg-medical-light-orange flex items-center justify-center">
+            <div className="w-10 h-10 rounded-xl bg-medical-light-orange flex items-center justify-center shrink-0">
               <Calendar className="w-5 h-5 text-medical-orange" />
             </div>
-            <div className="flex-1">
+            <div className="flex-1 min-w-0">
               <p className="font-semibold text-sm text-foreground">Visite du 9ème mois</p>
               <p className="text-xs text-muted-foreground">Dans 18 jours · Obligatoire</p>
             </div>
-            <button className="text-xs font-semibold text-primary bg-accent px-3 py-1.5 rounded-lg active:scale-95 transition-transform" onClick={() => navigate("/tracking")}>
+            <button className="text-xs font-semibold text-primary bg-accent px-3 py-1.5 rounded-lg active:scale-95 transition-transform shrink-0" onClick={() => navigate("/tracking")}>
               Prendre RDV
             </button>
           </div>
 
           <div className="medical-card flex items-center gap-3 border-l-4 border-medical-red">
-            <div className="w-10 h-10 rounded-xl bg-medical-light-red flex items-center justify-center">
+            <div className="w-10 h-10 rounded-xl bg-medical-light-red flex items-center justify-center shrink-0">
               <Syringe className="w-5 h-5 text-medical-red" />
             </div>
-            <div className="flex-1">
+            <div className="flex-1 min-w-0">
               <p className="font-semibold text-sm text-foreground">Vaccin ROR</p>
               <p className="text-xs text-muted-foreground">Recommandé avant 12 mois</p>
             </div>
-            <button className="text-xs font-semibold text-primary bg-accent px-3 py-1.5 rounded-lg active:scale-95 transition-transform" onClick={() => navigate("/tracking")}>
+            <button className="text-xs font-semibold text-primary bg-accent px-3 py-1.5 rounded-lg active:scale-95 transition-transform shrink-0" onClick={() => navigate("/tracking")}>
               Voir
             </button>
           </div>
@@ -86,7 +102,9 @@ const Home = () => {
         {/* Content carousel */}
         <section className="space-y-3">
           <div className="flex items-center justify-between">
-            <h2 className="text-base font-bold text-foreground">Pour {childName} à {childAge.split(" ")[0]} mois</h2>
+            <h2 className="text-base font-bold text-foreground">
+              {firstChild ? `Pour ${firstChild.first_name}` : "Contenus santé"}
+            </h2>
             <button className="text-xs font-semibold text-primary" onClick={() => navigate("/contents")}>
               Voir tout
             </button>
@@ -108,7 +126,7 @@ const Home = () => {
         <section>
           <div className="medical-card-elevated bg-gradient-to-br from-primary/5 to-accent cursor-pointer space-y-3 active:scale-[0.98] transition-transform" onClick={() => navigate("/assistant")}>
             <div className="flex items-center gap-3">
-              <div className="w-12 h-12 rounded-2xl bg-primary flex items-center justify-center">
+              <div className="w-12 h-12 rounded-2xl bg-primary flex items-center justify-center shrink-0">
                 <Bot className="w-6 h-6 text-primary-foreground" />
               </div>
               <div>
@@ -126,7 +144,9 @@ const Home = () => {
 
         {/* Weight mini chart */}
         <section className="space-y-3">
-          <h2 className="text-base font-bold text-foreground">Suivi de {childName}</h2>
+          <h2 className="text-base font-bold text-foreground">
+            {firstChild ? `Suivi de ${firstChild.first_name}` : "Suivi de croissance"}
+          </h2>
           <div className="medical-card space-y-3 cursor-pointer active:scale-[0.98] transition-transform" onClick={() => navigate("/tracking")}>
             <div className="flex items-center justify-between">
               <p className="text-sm font-semibold text-foreground">Courbe de poids</p>
@@ -153,9 +173,12 @@ const Home = () => {
             <h2 className="text-base font-bold text-foreground">Prochains rendez-vous</h2>
             <button className="text-xs font-semibold text-primary" onClick={() => navigate("/tracking")}>Voir tous</button>
           </div>
-          {upcomingRdv.map((rdv, i) => (
+          {[
+            { name: "Visite du 9ème mois", doctor: "Dr. Sophie Martin", date: "20 mars 2026", time: "10h30", type: "Pédiatre" },
+            { name: "Vaccin ROR", doctor: "Dr. Pierre Leroy", date: "15 juin 2026", time: "14h00", type: "Vaccination" },
+          ].map((rdv, i) => (
             <div key={i} className="medical-card flex items-center gap-3">
-              <div className="w-10 h-10 rounded-xl bg-medical-light-blue flex items-center justify-center">
+              <div className="w-10 h-10 rounded-xl bg-medical-light-blue flex items-center justify-center shrink-0">
                 <Calendar className="w-5 h-5 text-primary" />
               </div>
               <div className="flex-1 min-w-0">
@@ -166,7 +189,7 @@ const Home = () => {
                   <span className="text-[11px] text-muted-foreground">{rdv.date} à {rdv.time}</span>
                 </div>
               </div>
-              <span className="text-[10px] font-medium text-primary bg-accent px-2 py-1 rounded-full">{rdv.type}</span>
+              <span className="text-[10px] font-medium text-primary bg-accent px-2 py-1 rounded-full shrink-0">{rdv.type}</span>
             </div>
           ))}
         </section>
@@ -174,14 +197,14 @@ const Home = () => {
         {/* Documents CTA */}
         <section>
           <div className="medical-card flex items-center gap-3 cursor-pointer active:scale-[0.98] transition-transform" onClick={() => navigate("/documents")}>
-            <div className="w-10 h-10 rounded-xl bg-accent flex items-center justify-center">
+            <div className="w-10 h-10 rounded-xl bg-accent flex items-center justify-center shrink-0">
               <span className="text-lg">📁</span>
             </div>
-            <div className="flex-1">
+            <div className="flex-1 min-w-0">
               <p className="font-semibold text-sm text-foreground">Documents médicaux</p>
-              <p className="text-xs text-muted-foreground">8 documents · 12.5 Mo utilisés</p>
+              <p className="text-xs text-muted-foreground">Coffre-fort numérique sécurisé</p>
             </div>
-            <ChevronRight className="w-4 h-4 text-muted-foreground" />
+            <ChevronRight className="w-4 h-4 text-muted-foreground shrink-0" />
           </div>
         </section>
       </div>

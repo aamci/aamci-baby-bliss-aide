@@ -14,13 +14,393 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      chat_messages: {
+        Row: {
+          content: string
+          created_at: string
+          id: string
+          role: string
+          user_id: string
+        }
+        Insert: {
+          content: string
+          created_at?: string
+          id?: string
+          role: string
+          user_id: string
+        }
+        Update: {
+          content?: string
+          created_at?: string
+          id?: string
+          role?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      child_parents: {
+        Row: {
+          child_id: string
+          created_at: string
+          id: string
+          parent_id: string
+          role: string
+        }
+        Insert: {
+          child_id: string
+          created_at?: string
+          id?: string
+          parent_id: string
+          role?: string
+        }
+        Update: {
+          child_id?: string
+          created_at?: string
+          id?: string
+          parent_id?: string
+          role?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "child_parents_child_id_fkey"
+            columns: ["child_id"]
+            isOneToOne: false
+            referencedRelation: "children"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      children: {
+        Row: {
+          allergies: string[] | null
+          avatar_url: string | null
+          birth_date: string
+          birth_height: number | null
+          birth_weight: number | null
+          blood_type: string | null
+          created_at: string
+          doctor_name: string | null
+          first_name: string
+          gender: string | null
+          id: string
+          updated_at: string
+        }
+        Insert: {
+          allergies?: string[] | null
+          avatar_url?: string | null
+          birth_date: string
+          birth_height?: number | null
+          birth_weight?: number | null
+          blood_type?: string | null
+          created_at?: string
+          doctor_name?: string | null
+          first_name: string
+          gender?: string | null
+          id?: string
+          updated_at?: string
+        }
+        Update: {
+          allergies?: string[] | null
+          avatar_url?: string | null
+          birth_date?: string
+          birth_height?: number | null
+          birth_weight?: number | null
+          blood_type?: string | null
+          created_at?: string
+          doctor_name?: string | null
+          first_name?: string
+          gender?: string | null
+          id?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      co_parent_invites: {
+        Row: {
+          child_id: string
+          created_at: string
+          expires_at: string
+          id: string
+          invite_email: string | null
+          invite_phone: string | null
+          invited_by: string
+          status: string
+          token: string
+        }
+        Insert: {
+          child_id: string
+          created_at?: string
+          expires_at?: string
+          id?: string
+          invite_email?: string | null
+          invite_phone?: string | null
+          invited_by: string
+          status?: string
+          token?: string
+        }
+        Update: {
+          child_id?: string
+          created_at?: string
+          expires_at?: string
+          id?: string
+          invite_email?: string | null
+          invite_phone?: string | null
+          invited_by?: string
+          status?: string
+          token?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "co_parent_invites_child_id_fkey"
+            columns: ["child_id"]
+            isOneToOne: false
+            referencedRelation: "children"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      measurements: {
+        Row: {
+          child_id: string
+          created_at: string
+          id: string
+          measured_at: string
+          measurement_type: string
+          recorded_by: string | null
+          value: number
+        }
+        Insert: {
+          child_id: string
+          created_at?: string
+          id?: string
+          measured_at?: string
+          measurement_type: string
+          recorded_by?: string | null
+          value: number
+        }
+        Update: {
+          child_id?: string
+          created_at?: string
+          id?: string
+          measured_at?: string
+          measurement_type?: string
+          recorded_by?: string | null
+          value?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "measurements_child_id_fkey"
+            columns: ["child_id"]
+            isOneToOne: false
+            referencedRelation: "children"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      milestones: {
+        Row: {
+          acquired: boolean
+          acquired_at: string | null
+          child_id: string
+          created_at: string
+          domain: string
+          expected_age: string | null
+          id: string
+          name: string
+        }
+        Insert: {
+          acquired?: boolean
+          acquired_at?: string | null
+          child_id: string
+          created_at?: string
+          domain: string
+          expected_age?: string | null
+          id?: string
+          name: string
+        }
+        Update: {
+          acquired?: boolean
+          acquired_at?: string | null
+          child_id?: string
+          created_at?: string
+          domain?: string
+          expected_age?: string | null
+          id?: string
+          name?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "milestones_child_id_fkey"
+            columns: ["child_id"]
+            isOneToOne: false
+            referencedRelation: "children"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      profiles: {
+        Row: {
+          allergies: string[] | null
+          avatar_url: string | null
+          blood_type: string | null
+          created_at: string
+          doctor_name: string | null
+          first_name: string
+          id: string
+          last_name: string
+          medical_history: string | null
+          phone: string | null
+          updated_at: string
+        }
+        Insert: {
+          allergies?: string[] | null
+          avatar_url?: string | null
+          blood_type?: string | null
+          created_at?: string
+          doctor_name?: string | null
+          first_name?: string
+          id: string
+          last_name?: string
+          medical_history?: string | null
+          phone?: string | null
+          updated_at?: string
+        }
+        Update: {
+          allergies?: string[] | null
+          avatar_url?: string | null
+          blood_type?: string | null
+          created_at?: string
+          doctor_name?: string | null
+          first_name?: string
+          id?: string
+          last_name?: string
+          medical_history?: string | null
+          phone?: string | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      saved_articles: {
+        Row: {
+          article_author: string | null
+          article_category: string | null
+          article_slug: string
+          article_title: string
+          created_at: string
+          id: string
+          user_id: string
+        }
+        Insert: {
+          article_author?: string | null
+          article_category?: string | null
+          article_slug: string
+          article_title: string
+          created_at?: string
+          id?: string
+          user_id: string
+        }
+        Update: {
+          article_author?: string | null
+          article_category?: string | null
+          article_slug?: string
+          article_title?: string
+          created_at?: string
+          id?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      vaccines: {
+        Row: {
+          administered_at: string | null
+          child_id: string
+          created_at: string
+          dose_number: number | null
+          id: string
+          name: string
+          recommended_age: string | null
+          status: string
+        }
+        Insert: {
+          administered_at?: string | null
+          child_id: string
+          created_at?: string
+          dose_number?: number | null
+          id?: string
+          name: string
+          recommended_age?: string | null
+          status?: string
+        }
+        Update: {
+          administered_at?: string | null
+          child_id?: string
+          created_at?: string
+          dose_number?: number | null
+          id?: string
+          name?: string
+          recommended_age?: string | null
+          status?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "vaccines_child_id_fkey"
+            columns: ["child_id"]
+            isOneToOne: false
+            referencedRelation: "children"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      visits: {
+        Row: {
+          child_id: string
+          created_at: string
+          doctor_name: string | null
+          id: string
+          name: string
+          notes: string | null
+          status: string
+          visit_date: string | null
+        }
+        Insert: {
+          child_id: string
+          created_at?: string
+          doctor_name?: string | null
+          id?: string
+          name: string
+          notes?: string | null
+          status?: string
+          visit_date?: string | null
+        }
+        Update: {
+          child_id?: string
+          created_at?: string
+          doctor_name?: string | null
+          id?: string
+          name?: string
+          notes?: string | null
+          status?: string
+          visit_date?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "visits_child_id_fkey"
+            columns: ["child_id"]
+            isOneToOne: false
+            referencedRelation: "children"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
     }
     Views: {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      is_child_parent: {
+        Args: { _child_id: string; _user_id: string }
+        Returns: boolean
+      }
     }
     Enums: {
       [_ in never]: never

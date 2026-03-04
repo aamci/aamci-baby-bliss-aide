@@ -3,6 +3,8 @@ import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { AuthProvider } from "@/contexts/AuthContext";
+import ProtectedRoute from "@/components/ProtectedRoute";
 import Onboarding from "./pages/Onboarding";
 import Home from "./pages/Home";
 import Assistant from "./pages/Assistant";
@@ -30,27 +32,29 @@ const App = () => (
       <Toaster />
       <Sonner />
       <BrowserRouter>
-        <Routes>
-          <Route path="/" element={<Onboarding />} />
-          <Route path="/login" element={<Login />} />
-          <Route path="/signup" element={<Signup />} />
-          <Route path="/reset-password" element={<ResetPassword />} />
-          <Route element={<AppLayout />}>
-            <Route path="/home" element={<Home />} />
-            <Route path="/contents" element={<Contents />} />
-            <Route path="/tracking" element={<Tracking />} />
-            <Route path="/profile" element={<Profile />} />
-            <Route path="/assistant" element={<Assistant />} />
-          </Route>
-          <Route path="/article/:slug" element={<ArticleDetail />} />
-          <Route path="/notifications" element={<Notifications />} />
-          <Route path="/documents" element={<Documents />} />
-          <Route path="/child-profile" element={<ChildProfile />} />
-          <Route path="/notification-settings" element={<NotificationSettings />} />
-          <Route path="/coparenting" element={<CoParenting />} />
-          <Route path="/saved-contents" element={<SavedContents />} />
-          <Route path="*" element={<NotFound />} />
-        </Routes>
+        <AuthProvider>
+          <Routes>
+            <Route path="/" element={<Onboarding />} />
+            <Route path="/login" element={<Login />} />
+            <Route path="/signup" element={<Signup />} />
+            <Route path="/reset-password" element={<ResetPassword />} />
+            <Route element={<ProtectedRoute><AppLayout /></ProtectedRoute>}>
+              <Route path="/home" element={<Home />} />
+              <Route path="/contents" element={<Contents />} />
+              <Route path="/tracking" element={<Tracking />} />
+              <Route path="/profile" element={<Profile />} />
+              <Route path="/assistant" element={<Assistant />} />
+            </Route>
+            <Route path="/article/:slug" element={<ProtectedRoute><ArticleDetail /></ProtectedRoute>} />
+            <Route path="/notifications" element={<ProtectedRoute><Notifications /></ProtectedRoute>} />
+            <Route path="/documents" element={<ProtectedRoute><Documents /></ProtectedRoute>} />
+            <Route path="/child-profile" element={<ProtectedRoute><ChildProfile /></ProtectedRoute>} />
+            <Route path="/notification-settings" element={<ProtectedRoute><NotificationSettings /></ProtectedRoute>} />
+            <Route path="/coparenting" element={<ProtectedRoute><CoParenting /></ProtectedRoute>} />
+            <Route path="/saved-contents" element={<ProtectedRoute><SavedContents /></ProtectedRoute>} />
+            <Route path="*" element={<NotFound />} />
+          </Routes>
+        </AuthProvider>
       </BrowserRouter>
     </TooltipProvider>
   </QueryClientProvider>
