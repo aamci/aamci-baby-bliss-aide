@@ -21,6 +21,7 @@ import Signup from "./pages/Signup";
 import ResetPassword from "./pages/ResetPassword";
 import CoParenting from "./pages/CoParenting";
 import SavedContents from "./pages/SavedContents";
+import Teleconsultation from "./pages/Teleconsultation";
 import AppLayout from "./components/AppLayout";
 import NotFound from "./pages/NotFound";
 
@@ -52,6 +53,7 @@ const App = () => (
             <Route path="/notification-settings" element={<ProtectedRoute><NotificationSettings /></ProtectedRoute>} />
             <Route path="/coparenting" element={<ProtectedRoute><CoParenting /></ProtectedRoute>} />
             <Route path="/saved-contents" element={<ProtectedRoute><SavedContents /></ProtectedRoute>} />
+            <Route path="/teleconsultation" element={<ProtectedRoute><Teleconsultation /></ProtectedRoute>} />
             <Route path="*" element={<NotFound />} />
           </Routes>
         </AuthProvider>
