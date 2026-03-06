@@ -22,6 +22,7 @@ import ResetPassword from "./pages/ResetPassword";
 import CoParenting from "./pages/CoParenting";
 import SavedContents from "./pages/SavedContents";
 import Teleconsultation from "./pages/Teleconsultation";
+import Appointments from "./pages/Appointments";
 import AppLayout from "./components/AppLayout";
 import NotFound from "./pages/NotFound";
 
@@ -43,6 +44,7 @@ const App = () => (
               <Route path="/home" element={<Home />} />
               <Route path="/contents" element={<Contents />} />
               <Route path="/tracking" element={<Tracking />} />
+              <Route path="/appointments" element={<Appointments />} />
               <Route path="/profile" element={<Profile />} />
               <Route path="/assistant" element={<Assistant />} />
             </Route>
