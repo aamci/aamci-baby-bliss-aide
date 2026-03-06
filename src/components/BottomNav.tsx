@@ -1,11 +1,11 @@
-import { Home, Bot, CalendarCheck, TrendingUp, User } from "lucide-react";
+import { Home, Bot, BookOpen, TrendingUp, User } from "lucide-react";
 import { useLocation, useNavigate } from "react-router-dom";
 
 const tabs = [
   { icon: Home, label: "Accueil", path: "/home" },
-  { icon: TrendingUp, label: "Suivi", path: "/tracking" },
-  { icon: CalendarCheck, label: "RDV", path: "/appointments" },
   { icon: Bot, label: "Assistant", path: "/assistant" },
+  { icon: BookOpen, label: "Contenus", path: "/contents" },
+  { icon: TrendingUp, label: "Suivi", path: "/tracking" },
   { icon: User, label: "Profil", path: "/profile" },
 ];
 
