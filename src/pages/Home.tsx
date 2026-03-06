@@ -99,6 +99,23 @@ const Home = () => {
           </div>
         </section>
 
+        {/* RDV quick access */}
+        <section>
+          <button
+            className="medical-card-elevated w-full flex items-center gap-3 bg-gradient-to-r from-primary/5 to-accent active:scale-[0.98] transition-transform"
+            onClick={() => navigate("/appointments")}
+          >
+            <div className="w-12 h-12 rounded-2xl bg-primary flex items-center justify-center shrink-0">
+              <Calendar className="w-6 h-6 text-primary-foreground" />
+            </div>
+            <div className="flex-1 text-left">
+              <h3 className="font-bold text-foreground">Rendez-vous médicaux</h3>
+              <p className="text-xs text-muted-foreground">Planifier et gérer les consultations</p>
+            </div>
+            <ChevronRight className="w-5 h-5 text-muted-foreground shrink-0" />
+          </button>
+        </section>
+
         {/* Content carousel */}
         <section className="space-y-3">
           <div className="flex items-center justify-between">
