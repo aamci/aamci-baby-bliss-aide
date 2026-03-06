@@ -236,71 +236,80 @@ const Appointments = () => {
       {/* Add Modal */}
       {showAdd && (
         <div className="fixed inset-0 bg-foreground/30 backdrop-blur-sm z-50 flex items-end justify-center" onClick={() => setShowAdd(false)}>
-          <div className="bg-card rounded-t-3xl w-full max-w-lg p-6 space-y-4 animate-slide-up" onClick={(e) => e.stopPropagation()}>
-            <div className="flex items-center justify-between">
+          <div
+            className="bg-card rounded-t-3xl w-full max-w-lg max-h-[85vh] flex flex-col animate-slide-up"
+            onClick={(e) => e.stopPropagation()}
+          >
+            {/* Fixed header */}
+            <div className="flex items-center justify-between p-6 pb-3 shrink-0">
               <h2 className="text-lg font-bold text-foreground">Nouveau rendez-vous</h2>
               <button onClick={() => setShowAdd(false)} className="p-2 text-muted-foreground" aria-label="Fermer">
                 <X className="w-5 h-5" />
               </button>
             </div>
 
-            <div>
-              <label className="text-sm font-semibold text-foreground block mb-1.5">Type de rendez-vous</label>
-              <div className="flex flex-wrap gap-2">
-                {appointmentTypes.map((t) => (
-                  <button
-                    key={t}
-                    onClick={() => setForm((f) => ({ ...f, name: t }))}
-                    className={`px-3 py-1.5 rounded-xl text-xs font-medium transition-colors ${
-                      form.name === t ? "bg-primary text-primary-foreground" : "bg-muted text-muted-foreground"
-                    }`}
-                  >
-                    {t}
-                  </button>
-                ))}
+            {/* Scrollable content */}
+            <div className="flex-1 overflow-y-auto px-6 pb-2 space-y-4">
+              <div>
+                <label className="text-sm font-semibold text-foreground block mb-1.5">Type de rendez-vous</label>
+                <div className="flex flex-wrap gap-2">
+                  {appointmentTypes.map((t) => (
+                    <button
+                      key={t}
+                      onClick={() => setForm((f) => ({ ...f, name: t }))}
+                      className={`px-3 py-1.5 rounded-xl text-xs font-medium transition-colors ${
+                        form.name === t ? "bg-primary text-primary-foreground" : "bg-muted text-muted-foreground"
+                      }`}
+                    >
+                      {t}
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              <div>
+                <label className="text-sm font-semibold text-foreground block mb-1.5">Date du rendez-vous</label>
+                <input
+                  type="date"
+                  value={form.visit_date}
+                  onChange={(e) => setForm((f) => ({ ...f, visit_date: e.target.value }))}
+                  className="w-full bg-muted rounded-xl px-4 py-3 text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-ring"
+                />
+              </div>
+
+              <div>
+                <label className="text-sm font-semibold text-foreground block mb-1.5">Médecin (optionnel)</label>
+                <input
+                  type="text"
+                  value={form.doctor_name}
+                  onChange={(e) => setForm((f) => ({ ...f, doctor_name: e.target.value }))}
+                  placeholder="Dr. Martin"
+                  className="w-full bg-muted rounded-xl px-4 py-3 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring"
+                />
+              </div>
+
+              <div>
+                <label className="text-sm font-semibold text-foreground block mb-1.5">Notes (optionnel)</label>
+                <textarea
+                  value={form.notes}
+                  onChange={(e) => setForm((f) => ({ ...f, notes: e.target.value }))}
+                  placeholder="Informations complémentaires..."
+                  rows={2}
+                  className="w-full bg-muted rounded-xl px-4 py-3 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring resize-none"
+                />
               </div>
             </div>
 
-            <div>
-              <label className="text-sm font-semibold text-foreground block mb-1.5">Date du rendez-vous</label>
-              <input
-                type="date"
-                value={form.visit_date}
-                onChange={(e) => setForm((f) => ({ ...f, visit_date: e.target.value }))}
-                className="w-full bg-muted rounded-xl px-4 py-3 text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-ring"
-              />
+            {/* Fixed bottom button */}
+            <div className="p-6 pt-3 pb-[calc(1.5rem+env(safe-area-inset-bottom))] shrink-0">
+              <Button
+                onClick={handleAdd}
+                disabled={addAppt.isPending || !form.name || !form.visit_date}
+                className="w-full h-12 text-sm font-semibold rounded-xl"
+              >
+                {addAppt.isPending ? "Enregistrement..." : "Planifier le rendez-vous"}
+              </Button>
             </div>
-
-            <div>
-              <label className="text-sm font-semibold text-foreground block mb-1.5">Médecin (optionnel)</label>
-              <input
-                type="text"
-                value={form.doctor_name}
-                onChange={(e) => setForm((f) => ({ ...f, doctor_name: e.target.value }))}
-                placeholder="Dr. Martin"
-                className="w-full bg-muted rounded-xl px-4 py-3 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring"
-              />
-            </div>
-
-            <div>
-              <label className="text-sm font-semibold text-foreground block mb-1.5">Notes (optionnel)</label>
-              <textarea
-                value={form.notes}
-                onChange={(e) => setForm((f) => ({ ...f, notes: e.target.value }))}
-                placeholder="Informations complémentaires..."
-                rows={2}
-                className="w-full bg-muted rounded-xl px-4 py-3 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring resize-none"
-              />
-            </div>
-
-            <Button
-              onClick={handleAdd}
-              disabled={addAppt.isPending || !form.name || !form.visit_date}
-              className="w-full h-12 text-sm font-semibold rounded-xl"
-              style={{ boxShadow: "var(--shadow-button)" }}
-            >
-              {addAppt.isPending ? "Enregistrement..." : "Planifier le rendez-vous"}
-            </Button>
           </div>
         </div>
       )}
