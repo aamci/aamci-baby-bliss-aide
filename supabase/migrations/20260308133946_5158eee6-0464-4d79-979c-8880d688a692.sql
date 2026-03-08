@@ -1,0 +1,1 @@
+CREATE POLICY "Parents can delete visits" ON public.visits FOR DELETE TO authenticated USING (is_child_parent(auth.uid(), child_id));

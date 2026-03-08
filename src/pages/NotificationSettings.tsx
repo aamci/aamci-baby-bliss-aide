@@ -1,6 +1,44 @@
-import { ArrowLeft } from "lucide-react";
+import { ArrowLeft, Bell } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useState } from "react";
+import { usePushNotifications } from "@/hooks/usePushNotifications";
+import { toast } from "sonner";
+
+const PushNotificationBanner = () => {
+  const { isSupported, permission, subscribe } = usePushNotifications();
+  const [loading, setLoading] = useState(false);
+
+  if (!isSupported || permission === "granted") return null;
+
+  const handleEnable = async () => {
+    setLoading(true);
+    const ok = await subscribe();
+    setLoading(false);
+    if (ok) toast.success("Notifications push activées !");
+    else toast.error("Impossible d'activer les notifications");
+  };
+
+  return (
+    <section className="mb-2">
+      <div className="medical-card bg-primary/5 border border-primary/20 flex items-center gap-3">
+        <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center shrink-0">
+          <Bell className="w-5 h-5 text-primary" />
+        </div>
+        <div className="flex-1">
+          <p className="text-sm font-semibold text-foreground">Activer les notifications push</p>
+          <p className="text-xs text-muted-foreground">Recevez des rappels 1h avant vos rendez-vous</p>
+        </div>
+        <button
+          onClick={handleEnable}
+          disabled={loading}
+          className="px-3 py-1.5 text-xs font-semibold bg-primary text-primary-foreground rounded-xl active:scale-95 transition-transform shrink-0"
+        >
+          {loading ? "..." : "Activer"}
+        </button>
+      </div>
+    </section>
+  );
+};
 
 const NotificationSettings = () => {
   const navigate = useNavigate();
@@ -95,6 +133,8 @@ const NotificationSettings = () => {
               )}
             </div>
           </section>
+
+          <PushNotificationBanner />
 
           <section>
             <h2 className="text-sm font-bold text-muted-foreground uppercase tracking-wide mb-3">Canaux</h2>
