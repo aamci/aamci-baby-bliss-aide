@@ -53,7 +53,7 @@ const Appointments = () => {
         onSuccess: () => {
           toast.success("Rendez-vous ajouté !");
           setShowAdd(false);
-          setForm({ name: "", doctor_name: "", visit_date: "", notes: "" });
+          setForm({ name: "", doctor_name: "", visit_date: "", visit_time: "", notes: "" });
         },
         onError: (e) => toast.error(e.message),
       }
