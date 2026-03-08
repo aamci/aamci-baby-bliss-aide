@@ -21,7 +21,7 @@ const appointmentTypes = [
 const Appointments = () => {
   const [showAdd, setShowAdd] = useState(false);
   const [selectedDate, setSelectedDate] = useState<Date>(new Date());
-  const [form, setForm] = useState({ name: "", doctor_name: "", visit_date: "", notes: "" });
+  const [form, setForm] = useState({ name: "", doctor_name: "", visit_date: "", visit_time: "", notes: "" });
 
   const { data: children } = useChildren();
   const firstChild = children?.[0];
