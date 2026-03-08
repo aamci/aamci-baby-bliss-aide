@@ -47,12 +47,15 @@ const Appointments = () => {
 
   const handleAdd = () => {
     if (!form.name || !form.visit_date || !firstChild) return;
-    const notesWithTime = [
-      form.visit_time ? `Heure : ${form.visit_time}` : "",
-      form.notes,
-    ].filter(Boolean).join("\n");
     addAppt.mutate(
-      { child_id: firstChild.id, name: form.name, doctor_name: form.doctor_name, visit_date: form.visit_date, notes: notesWithTime || undefined },
+      {
+        child_id: firstChild.id,
+        name: form.name,
+        doctor_name: form.doctor_name,
+        visit_date: form.visit_date,
+        visit_time: form.visit_time || undefined,
+        notes: form.notes || undefined,
+      },
       {
         onSuccess: () => {
           toast.success("Rendez-vous ajouté !");
@@ -72,16 +75,15 @@ const Appointments = () => {
     );
   };
 
-  const extractTime = (notes: string | null) => {
-    if (!notes) return null;
-    const match = notes.match(/^Heure : (\d{2}:\d{2})/);
-    return match ? match[1] : null;
-  };
-
-  const formatDateLabel = (dateStr: string, notes?: string | null) => {
+  const formatDateLabel = (dateStr: string, visitTime?: string | null, notes?: string | null) => {
     const d = parseISO(dateStr);
-    const time = extractTime(notes ?? null);
-    const timeStr = time ? ` à ${time}` : "";
+    // Prefer visit_time column, fallback to notes for old data
+    let time = visitTime;
+    if (!time && notes) {
+      const match = notes.match(/^Heure : (\d{2}:\d{2})/);
+      time = match ? match[1] : null;
+    }
+    const timeStr = time ? ` à ${time.slice(0, 5)}` : "";
     if (isToday(d)) return `Aujourd'hui${timeStr}`;
     if (isTomorrow(d)) return `Demain${timeStr}`;
     return format(d, "EEEE d MMMM", { locale: fr }) + timeStr;
@@ -198,7 +200,7 @@ const Appointments = () => {
               <div className="flex-1 min-w-0">
                 <p className="font-semibold text-sm text-foreground truncate">{a.name}</p>
                 <p className="text-xs text-muted-foreground">
-                  {a.visit_date ? formatDateLabel(a.visit_date, a.notes) : "À planifier"}
+                  {a.visit_date ? formatDateLabel(a.visit_date, (a as any).visit_time, a.notes) : "À planifier"}
                   {a.doctor_name ? ` · ${a.doctor_name}` : ""}
                 </p>
               </div>
