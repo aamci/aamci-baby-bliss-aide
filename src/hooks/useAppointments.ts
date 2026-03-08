@@ -26,12 +26,13 @@ export const useAddAppointment = () => {
       name: string;
       doctor_name?: string;
       visit_date: string;
+      visit_time?: string;
       notes?: string;
       status?: string;
     }) => {
       const { data, error } = await supabase
         .from("visits")
-        .insert({ ...appt, status: appt.status || "upcoming" })
+        .insert({ ...appt, status: appt.status || "upcoming" } as any)
         .select()
         .single();
       if (error) throw error;
