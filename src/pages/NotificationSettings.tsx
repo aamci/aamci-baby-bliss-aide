@@ -1,6 +1,8 @@
-import { ArrowLeft } from "lucide-react";
+import { ArrowLeft, Bell } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useState } from "react";
+import { usePushNotifications } from "@/hooks/usePushNotifications";
+import { toast } from "sonner";
 
 const NotificationSettings = () => {
   const navigate = useNavigate();
@@ -95,6 +97,8 @@ const NotificationSettings = () => {
               )}
             </div>
           </section>
+
+          <PushNotificationBanner />
 
           <section>
             <h2 className="text-sm font-bold text-muted-foreground uppercase tracking-wide mb-3">Canaux</h2>
