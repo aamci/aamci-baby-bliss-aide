@@ -45,8 +45,29 @@ export const useAddAppointment = () => {
 export const useUpdateAppointment = () => {
   const qc = useQueryClient();
   return useMutation({
-    mutationFn: async ({ id, child_id, ...updates }: { id: string; child_id: string; status?: string; visit_date?: string; notes?: string }) => {
-      const { error } = await supabase.from("visits").update(updates).eq("id", id);
+    mutationFn: async ({ id, child_id, ...updates }: {
+      id: string;
+      child_id: string;
+      status?: string;
+      visit_date?: string;
+      visit_time?: string;
+      notes?: string;
+      name?: string;
+      doctor_name?: string;
+    }) => {
+      const { error } = await supabase.from("visits").update(updates as any).eq("id", id);
+      if (error) throw error;
+      return { child_id };
+    },
+    onSuccess: (d) => qc.invalidateQueries({ queryKey: ["visits", d.child_id] }),
+  });
+};
+
+export const useDeleteAppointment = () => {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: async ({ id, child_id }: { id: string; child_id: string }) => {
+      const { error } = await supabase.from("visits").delete().eq("id", id);
       if (error) throw error;
       return { child_id };
     },
