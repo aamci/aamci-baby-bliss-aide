@@ -40,6 +40,7 @@ const PushNotificationBanner = () => {
   );
 };
 
+const NotificationSettings = () => {
   const navigate = useNavigate();
   const [settings, setSettings] = useState({
     visits: true,
