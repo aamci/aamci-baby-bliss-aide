@@ -72,11 +72,19 @@ const Appointments = () => {
     );
   };
 
-  const formatDateLabel = (dateStr: string) => {
+  const extractTime = (notes: string | null) => {
+    if (!notes) return null;
+    const match = notes.match(/^Heure : (\d{2}:\d{2})/);
+    return match ? match[1] : null;
+  };
+
+  const formatDateLabel = (dateStr: string, notes?: string | null) => {
     const d = parseISO(dateStr);
-    if (isToday(d)) return "Aujourd'hui";
-    if (isTomorrow(d)) return "Demain";
-    return format(d, "EEEE d MMMM", { locale: fr });
+    const time = extractTime(notes ?? null);
+    const timeStr = time ? ` à ${time}` : "";
+    if (isToday(d)) return `Aujourd'hui${timeStr}`;
+    if (isTomorrow(d)) return `Demain${timeStr}`;
+    return format(d, "EEEE d MMMM", { locale: fr }) + timeStr;
   };
 
   const prevMonth = () => setSelectedDate((d) => new Date(d.getFullYear(), d.getMonth() - 1, 1));
