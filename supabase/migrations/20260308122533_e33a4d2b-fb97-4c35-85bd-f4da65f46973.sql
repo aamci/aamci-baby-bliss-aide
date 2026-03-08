@@ -1,0 +1,1 @@
+ALTER TABLE public.visits ADD COLUMN visit_time time WITHOUT TIME ZONE DEFAULT NULL;
