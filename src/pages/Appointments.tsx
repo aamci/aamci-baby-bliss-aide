@@ -47,8 +47,12 @@ const Appointments = () => {
 
   const handleAdd = () => {
     if (!form.name || !form.visit_date || !firstChild) return;
+    const notesWithTime = [
+      form.visit_time ? `Heure : ${form.visit_time}` : "",
+      form.notes,
+    ].filter(Boolean).join("\n");
     addAppt.mutate(
-      { child_id: firstChild.id, ...form },
+      { child_id: firstChild.id, name: form.name, doctor_name: form.doctor_name, visit_date: form.visit_date, notes: notesWithTime || undefined },
       {
         onSuccess: () => {
           toast.success("Rendez-vous ajouté !");
