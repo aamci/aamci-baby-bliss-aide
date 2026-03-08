@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Calendar, Plus, Check, Stethoscope, ChevronRight } from "lucide-react";
+import { Calendar, Plus, Check, Clock, Stethoscope, ChevronRight } from "lucide-react";
 import { Drawer, DrawerContent, DrawerHeader, DrawerTitle, DrawerFooter, DrawerClose } from "@/components/ui/drawer";
 import { Button } from "@/components/ui/button";
 import { useChildren } from "@/hooks/useChildren";
@@ -21,7 +21,7 @@ const appointmentTypes = [
 const Appointments = () => {
   const [showAdd, setShowAdd] = useState(false);
   const [selectedDate, setSelectedDate] = useState<Date>(new Date());
-  const [form, setForm] = useState({ name: "", doctor_name: "", visit_date: "", notes: "" });
+  const [form, setForm] = useState({ name: "", doctor_name: "", visit_date: "", visit_time: "", notes: "" });
 
   const { data: children } = useChildren();
   const firstChild = children?.[0];
@@ -47,13 +47,17 @@ const Appointments = () => {
 
   const handleAdd = () => {
     if (!form.name || !form.visit_date || !firstChild) return;
+    const notesWithTime = [
+      form.visit_time ? `Heure : ${form.visit_time}` : "",
+      form.notes,
+    ].filter(Boolean).join("\n");
     addAppt.mutate(
-      { child_id: firstChild.id, ...form },
+      { child_id: firstChild.id, name: form.name, doctor_name: form.doctor_name, visit_date: form.visit_date, notes: notesWithTime || undefined },
       {
         onSuccess: () => {
           toast.success("Rendez-vous ajouté !");
           setShowAdd(false);
-          setForm({ name: "", doctor_name: "", visit_date: "", notes: "" });
+          setForm({ name: "", doctor_name: "", visit_date: "", visit_time: "", notes: "" });
         },
         onError: (e) => toast.error(e.message),
       }
@@ -68,11 +72,19 @@ const Appointments = () => {
     );
   };
 
-  const formatDateLabel = (dateStr: string) => {
+  const extractTime = (notes: string | null) => {
+    if (!notes) return null;
+    const match = notes.match(/^Heure : (\d{2}:\d{2})/);
+    return match ? match[1] : null;
+  };
+
+  const formatDateLabel = (dateStr: string, notes?: string | null) => {
     const d = parseISO(dateStr);
-    if (isToday(d)) return "Aujourd'hui";
-    if (isTomorrow(d)) return "Demain";
-    return format(d, "EEEE d MMMM", { locale: fr });
+    const time = extractTime(notes ?? null);
+    const timeStr = time ? ` à ${time}` : "";
+    if (isToday(d)) return `Aujourd'hui${timeStr}`;
+    if (isTomorrow(d)) return `Demain${timeStr}`;
+    return format(d, "EEEE d MMMM", { locale: fr }) + timeStr;
   };
 
   const prevMonth = () => setSelectedDate((d) => new Date(d.getFullYear(), d.getMonth() - 1, 1));
@@ -186,7 +198,7 @@ const Appointments = () => {
               <div className="flex-1 min-w-0">
                 <p className="font-semibold text-sm text-foreground truncate">{a.name}</p>
                 <p className="text-xs text-muted-foreground">
-                  {a.visit_date ? formatDateLabel(a.visit_date) : "À planifier"}
+                  {a.visit_date ? formatDateLabel(a.visit_date, a.notes) : "À planifier"}
                   {a.doctor_name ? ` · ${a.doctor_name}` : ""}
                 </p>
               </div>
@@ -259,14 +271,25 @@ const Appointments = () => {
               </div>
             </div>
 
-            <div>
-              <label className="text-sm font-semibold text-foreground block mb-1.5">Date du rendez-vous</label>
-              <input
-                type="date"
-                value={form.visit_date}
-                onChange={(e) => setForm((f) => ({ ...f, visit_date: e.target.value }))}
-                className="w-full bg-muted rounded-xl px-4 py-3 text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-ring"
-              />
+            <div className="grid grid-cols-2 gap-3">
+              <div>
+                <label className="text-sm font-semibold text-foreground block mb-1.5">Date</label>
+                <input
+                  type="date"
+                  value={form.visit_date}
+                  onChange={(e) => setForm((f) => ({ ...f, visit_date: e.target.value }))}
+                  className="w-full bg-muted rounded-xl px-4 py-3 text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-ring"
+                />
+              </div>
+              <div>
+                <label className="text-sm font-semibold text-foreground block mb-1.5">Heure</label>
+                <input
+                  type="time"
+                  value={form.visit_time}
+                  onChange={(e) => setForm((f) => ({ ...f, visit_time: e.target.value }))}
+                  className="w-full bg-muted rounded-xl px-4 py-3 text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-ring"
+                />
+              </div>
             </div>
 
             <div>
