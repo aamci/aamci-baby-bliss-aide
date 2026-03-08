@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Calendar, Plus, Check, Stethoscope, ChevronRight, Pencil, Trash2 } from "lucide-react";
+import { Calendar, Plus, Check, Stethoscope, ChevronRight, Pencil, Trash2, Users } from "lucide-react";
 import { Drawer, DrawerContent, DrawerHeader, DrawerTitle, DrawerFooter, DrawerClose } from "@/components/ui/drawer";
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from "@/components/ui/alert-dialog";
 import { Button } from "@/components/ui/button";
@@ -35,10 +35,11 @@ const Appointments = () => {
   const [deleteAppt, setDeleteAppt] = useState<any>(null);
   const [selectedDate, setSelectedDate] = useState<Date>(new Date());
   const [form, setForm] = useState<AppointmentForm>(emptyForm);
+  const [selectedChildId, setSelectedChildId] = useState<string | null>(null);
 
   const { data: children } = useChildren();
-  const firstChild = children?.[0];
-  const { data: appointments = [] } = useAppointments(firstChild?.id);
+  const selectedChild = children?.find((c) => c.id === selectedChildId) ?? children?.[0] ?? null;
+  const { data: appointments = [] } = useAppointments(selectedChild?.id);
   const addApptMut = useAddAppointment();
   const updateApptMut = useUpdateAppointment();
   const deleteApptMut = useDeleteAppointment();
