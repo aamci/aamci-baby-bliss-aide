@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Calendar, Plus, Check, Stethoscope, ChevronRight } from "lucide-react";
+import { Calendar, Plus, Check, Clock, Stethoscope, ChevronRight } from "lucide-react";
 import { Drawer, DrawerContent, DrawerHeader, DrawerTitle, DrawerFooter, DrawerClose } from "@/components/ui/drawer";
 import { Button } from "@/components/ui/button";
 import { useChildren } from "@/hooks/useChildren";
