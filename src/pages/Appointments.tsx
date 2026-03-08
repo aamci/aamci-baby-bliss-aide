@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Calendar, Plus, Check, Stethoscope, ChevronRight, Pencil, Trash2 } from "lucide-react";
+import { Calendar, Plus, Check, Stethoscope, ChevronRight, Pencil, Trash2, Users } from "lucide-react";
 import { Drawer, DrawerContent, DrawerHeader, DrawerTitle, DrawerFooter, DrawerClose } from "@/components/ui/drawer";
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from "@/components/ui/alert-dialog";
 import { Button } from "@/components/ui/button";
@@ -35,10 +35,11 @@ const Appointments = () => {
   const [deleteAppt, setDeleteAppt] = useState<any>(null);
   const [selectedDate, setSelectedDate] = useState<Date>(new Date());
   const [form, setForm] = useState<AppointmentForm>(emptyForm);
+  const [selectedChildId, setSelectedChildId] = useState<string | null>(null);
 
   const { data: children } = useChildren();
-  const firstChild = children?.[0];
-  const { data: appointments = [] } = useAppointments(firstChild?.id);
+  const selectedChild = children?.find((c) => c.id === selectedChildId) ?? children?.[0] ?? null;
+  const { data: appointments = [] } = useAppointments(selectedChild?.id);
   const addApptMut = useAddAppointment();
   const updateApptMut = useUpdateAppointment();
   const deleteApptMut = useDeleteAppointment();
@@ -78,13 +79,13 @@ const Appointments = () => {
   };
 
   const handleSubmit = () => {
-    if (!form.name || !form.visit_date || !firstChild) return;
+    if (!form.name || !form.visit_date || !selectedChild) return;
 
     if (editingAppt) {
       updateApptMut.mutate(
         {
           id: editingAppt.id,
-          child_id: firstChild.id,
+          child_id: selectedChild.id,
           name: form.name,
           doctor_name: form.doctor_name || undefined,
           visit_date: form.visit_date,
@@ -104,7 +105,7 @@ const Appointments = () => {
     } else {
       addApptMut.mutate(
         {
-          child_id: firstChild.id,
+          child_id: selectedChild.id,
           name: form.name,
           doctor_name: form.doctor_name || undefined,
           visit_date: form.visit_date,
@@ -124,9 +125,9 @@ const Appointments = () => {
   };
 
   const handleDelete = () => {
-    if (!deleteAppt || !firstChild) return;
+    if (!deleteAppt || !selectedChild) return;
     deleteApptMut.mutate(
-      { id: deleteAppt.id, child_id: firstChild.id },
+      { id: deleteAppt.id, child_id: selectedChild.id },
       {
         onSuccess: () => {
           toast.success("Rendez-vous supprimé");
@@ -138,9 +139,9 @@ const Appointments = () => {
   };
 
   const markDone = (id: string) => {
-    if (!firstChild) return;
+    if (!selectedChild) return;
     updateApptMut.mutate(
-      { id, child_id: firstChild.id, status: "done" },
+      { id, child_id: selectedChild.id, status: "done" },
       { onSuccess: () => toast.success("RDV marqué comme effectué") }
     );
   };
@@ -170,7 +171,7 @@ const Appointments = () => {
         <div>
           <h1 className="text-xl font-bold text-foreground">Rendez-vous</h1>
           <p className="text-sm text-muted-foreground">
-            {firstChild ? `Planning de ${firstChild.first_name}` : "Ajoutez un enfant"}
+            {selectedChild ? `Planning de ${selectedChild.first_name}` : "Ajoutez un enfant"}
           </p>
         </div>
         <button
@@ -181,6 +182,26 @@ const Appointments = () => {
           <Plus className="w-5 h-5" />
         </button>
       </div>
+
+      {/* Child Selector */}
+      {children && children.length > 1 && (
+        <div className="flex gap-2 overflow-x-auto pb-1">
+          {children.map((child) => (
+            <button
+              key={child.id}
+              onClick={() => setSelectedChildId(child.id)}
+              className={`flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-medium whitespace-nowrap transition-colors ${
+                selectedChild?.id === child.id
+                  ? "bg-primary text-primary-foreground"
+                  : "bg-muted text-muted-foreground hover:bg-accent"
+              }`}
+            >
+              <Users className="w-3.5 h-3.5" />
+              {child.first_name}
+            </button>
+          ))}
+        </div>
+      )}
 
       {/* Mini Calendar */}
       <div className="medical-card space-y-3">
