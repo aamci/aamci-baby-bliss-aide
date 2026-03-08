@@ -263,14 +263,25 @@ const Appointments = () => {
               </div>
             </div>
 
-            <div>
-              <label className="text-sm font-semibold text-foreground block mb-1.5">Date du rendez-vous</label>
-              <input
-                type="date"
-                value={form.visit_date}
-                onChange={(e) => setForm((f) => ({ ...f, visit_date: e.target.value }))}
-                className="w-full bg-muted rounded-xl px-4 py-3 text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-ring"
-              />
+            <div className="grid grid-cols-2 gap-3">
+              <div>
+                <label className="text-sm font-semibold text-foreground block mb-1.5">Date</label>
+                <input
+                  type="date"
+                  value={form.visit_date}
+                  onChange={(e) => setForm((f) => ({ ...f, visit_date: e.target.value }))}
+                  className="w-full bg-muted rounded-xl px-4 py-3 text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-ring"
+                />
+              </div>
+              <div>
+                <label className="text-sm font-semibold text-foreground block mb-1.5">Heure</label>
+                <input
+                  type="time"
+                  value={form.visit_time}
+                  onChange={(e) => setForm((f) => ({ ...f, visit_time: e.target.value }))}
+                  className="w-full bg-muted rounded-xl px-4 py-3 text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-ring"
+                />
+              </div>
             </div>
 
             <div>
