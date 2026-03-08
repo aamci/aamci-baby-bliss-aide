@@ -200,7 +200,7 @@ const Appointments = () => {
               <div className="flex-1 min-w-0">
                 <p className="font-semibold text-sm text-foreground truncate">{a.name}</p>
                 <p className="text-xs text-muted-foreground">
-                  {a.visit_date ? formatDateLabel(a.visit_date, a.notes) : "À planifier"}
+                  {a.visit_date ? formatDateLabel(a.visit_date, (a as any).visit_time, a.notes) : "À planifier"}
                   {a.doctor_name ? ` · ${a.doctor_name}` : ""}
                 </p>
               </div>
