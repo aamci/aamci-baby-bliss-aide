@@ -1,50 +1,75 @@
-import { ArrowLeft, Camera, Save, Plus, Baby } from "lucide-react";
+import { ArrowLeft, Camera, Save, Plus, Baby, ChevronRight } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
-import { useChildren, useCreateChild, useUpdateChild, useChildAge } from "@/hooks/useChildren";
+import { useChildren, useCreateChild, useUpdateChild, useChildAge, Child } from "@/hooks/useChildren";
 import { toast } from "sonner";
 import PageTransition from "@/components/PageTransition";
+
+const emptyForm = {
+  first_name: "",
+  birth_date: "",
+  gender: "Fille" as string,
+  blood_type: "",
+  allergies: [] as string[],
+  doctor_name: "",
+  birth_weight: "",
+  birth_height: "",
+};
 
 const ChildProfile = () => {
   const navigate = useNavigate();
   const { data: children, isLoading } = useChildren();
   const createChild = useCreateChild();
   const updateChild = useUpdateChild();
-  const firstChild = children?.[0];
-  const childAge = useChildAge(firstChild?.birth_date);
 
+  const [selectedChildId, setSelectedChildId] = useState<string | null>(null);
   const [isNew, setIsNew] = useState(false);
-  const [form, setForm] = useState({
-    first_name: "",
-    birth_date: "",
-    gender: "Fille" as string,
-    blood_type: "",
-    allergies: [] as string[],
-    doctor_name: "",
-    birth_weight: "",
-    birth_height: "",
-  });
+  const [form, setForm] = useState({ ...emptyForm });
   const [allergyInput, setAllergyInput] = useState("");
   const [saving, setSaving] = useState(false);
 
+  const selectedChild = children?.find((c) => c.id === selectedChildId) ?? null;
+  const childAge = useChildAge(selectedChild?.birth_date);
+
+  // Auto-select first child on load
   useEffect(() => {
-    if (firstChild) {
-      setForm({
-        first_name: firstChild.first_name,
-        birth_date: firstChild.birth_date,
-        gender: firstChild.gender || "Fille",
-        blood_type: firstChild.blood_type || "",
-        allergies: firstChild.allergies || [],
-        doctor_name: firstChild.doctor_name || "",
-        birth_weight: firstChild.birth_weight?.toString() || "",
-        birth_height: firstChild.birth_height?.toString() || "",
-      });
-      setIsNew(false);
-    } else if (!isLoading) {
-      setIsNew(true);
+    if (!isLoading && children) {
+      if (children.length === 0) {
+        setIsNew(true);
+      } else if (!selectedChildId) {
+        setSelectedChildId(children[0].id);
+      }
     }
-  }, [firstChild, isLoading]);
+  }, [children, isLoading, selectedChildId]);
+
+  // Populate form when selected child changes
+  useEffect(() => {
+    if (selectedChild && !isNew) {
+      setForm({
+        first_name: selectedChild.first_name,
+        birth_date: selectedChild.birth_date,
+        gender: selectedChild.gender || "Fille",
+        blood_type: selectedChild.blood_type || "",
+        allergies: selectedChild.allergies || [],
+        doctor_name: selectedChild.doctor_name || "",
+        birth_weight: selectedChild.birth_weight?.toString() || "",
+        birth_height: selectedChild.birth_height?.toString() || "",
+      });
+    }
+  }, [selectedChild, isNew]);
+
+  const startAddNew = () => {
+    setIsNew(true);
+    setSelectedChildId(null);
+    setForm({ ...emptyForm });
+    setAllergyInput("");
+  };
+
+  const selectChild = (child: Child) => {
+    setIsNew(false);
+    setSelectedChildId(child.id);
+  };
 
   const addAllergy = () => {
     if (allergyInput.trim()) {
@@ -77,10 +102,12 @@ const ChildProfile = () => {
 
     try {
       if (isNew) {
-        await createChild.mutateAsync(payload as any);
+        const created = await createChild.mutateAsync(payload as any);
         toast.success("Profil enfant créé !");
+        setIsNew(false);
+        setSelectedChildId(created.id);
       } else {
-        await updateChild.mutateAsync({ id: firstChild!.id, ...payload });
+        await updateChild.mutateAsync({ id: selectedChild!.id, ...payload });
         toast.success("Profil enfant mis à jour !");
       }
     } catch (e: any) {
@@ -105,11 +132,40 @@ const ChildProfile = () => {
             <button onClick={() => navigate(-1)} className="w-10 h-10 rounded-full bg-muted flex items-center justify-center" aria-label="Retour">
               <ArrowLeft className="w-5 h-5 text-foreground" />
             </button>
-            <div>
+            <div className="flex-1">
               <h1 className="text-xl font-bold text-foreground">{isNew ? "Ajouter un enfant" : "Profil enfant"}</h1>
               {!isNew && childAge && <p className="text-xs text-muted-foreground">{childAge}</p>}
             </div>
+            {!isNew && (
+              <button
+                onClick={startAddNew}
+                className="w-10 h-10 rounded-xl bg-primary flex items-center justify-center text-primary-foreground active:scale-95 transition-transform"
+                aria-label="Ajouter un enfant"
+              >
+                <Plus className="w-5 h-5" />
+              </button>
+            )}
           </div>
+
+          {/* Child selector tabs */}
+          {children && children.length > 1 && !isNew && (
+            <div className="flex gap-2 overflow-x-auto pb-3 mb-4 scrollbar-hide">
+              {children.map((child) => (
+                <button
+                  key={child.id}
+                  onClick={() => selectChild(child)}
+                  className={`flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-medium whitespace-nowrap transition-colors ${
+                    selectedChild?.id === child.id
+                      ? "bg-primary text-primary-foreground"
+                      : "bg-muted text-muted-foreground hover:bg-accent"
+                  }`}
+                >
+                  <Baby className="w-3.5 h-3.5" />
+                  {child.first_name}
+                </button>
+              ))}
+            </div>
+          )}
 
           {/* Photo */}
           <div className="flex justify-center mb-6">
@@ -242,6 +298,16 @@ const ChildProfile = () => {
               <Save className="w-5 h-5 mr-2" />
               {saving ? "Enregistrement..." : isNew ? "Créer le profil" : "Enregistrer"}
             </Button>
+
+            {isNew && children && children.length > 0 && (
+              <Button
+                variant="ghost"
+                onClick={() => { setIsNew(false); setSelectedChildId(children[0].id); }}
+                className="w-full text-sm text-muted-foreground"
+              >
+                Annuler
+              </Button>
+            )}
           </div>
         </div>
       </div>
