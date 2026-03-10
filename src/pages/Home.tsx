@@ -2,6 +2,9 @@ import { Bell, Bot, ChevronRight, Calendar, Syringe, Baby, Heart, Moon, Apple, B
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
 import { useChildren, useChildAge } from "@/hooks/useChildren";
+import { useAppointments } from "@/hooks/useAppointments";
+import { format, parseISO, isFuture, isToday, isTomorrow } from "date-fns";
+import { fr } from "date-fns/locale";
 import PageTransition from "@/components/PageTransition";
 
 const contentCards = [
