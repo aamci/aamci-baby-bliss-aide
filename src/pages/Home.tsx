@@ -21,6 +21,19 @@ const Home = () => {
   const firstChild = children?.[0];
   const childAge = useChildAge(firstChild?.birth_date);
   const parentName = profile?.first_name || "Parent";
+  const { data: appointments = [] } = useAppointments(firstChild?.id);
+
+  const upcomingAppts = appointments
+    .filter((a) => a.visit_date && a.status !== "done" && isFuture(parseISO(a.visit_date)))
+    .slice(0, 3);
+
+  const formatApptDate = (dateStr: string, visitTime?: string | null) => {
+    const d = parseISO(dateStr);
+    const timeStr = visitTime ? ` à ${visitTime.slice(0, 5)}` : "";
+    if (isToday(d)) return `Aujourd'hui${timeStr}`;
+    if (isTomorrow(d)) return `Demain${timeStr}`;
+    return format(d, "d MMM yyyy", { locale: fr }) + timeStr;
+  };
 
   return (
     <PageTransition>
