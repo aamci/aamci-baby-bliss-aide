@@ -204,27 +204,37 @@ const Home = () => {
         <section className="space-y-3">
           <div className="flex items-center justify-between">
             <h2 className="text-base font-bold text-foreground">Prochains rendez-vous</h2>
-            <button className="text-xs font-semibold text-primary" onClick={() => navigate("/tracking")}>Voir tous</button>
+            <button className="text-xs font-semibold text-primary" onClick={() => navigate("/appointments")}>Voir tous</button>
           </div>
-          {[
-            { name: "Visite du 9ème mois", doctor: "Dr. Sophie Martin", date: "20 mars 2026", time: "10h30", type: "Pédiatre" },
-            { name: "Vaccin ROR", doctor: "Dr. Pierre Leroy", date: "15 juin 2026", time: "14h00", type: "Vaccination" },
-          ].map((rdv, i) => (
-            <div key={i} className="medical-card flex items-center gap-3">
+          {upcomingAppts.length > 0 ? (
+            upcomingAppts.map((rdv) => (
+              <div key={rdv.id} className="medical-card flex items-center gap-3 cursor-pointer active:scale-[0.98] transition-transform" onClick={() => navigate("/appointments")}>
+                <div className="w-10 h-10 rounded-xl bg-medical-light-blue flex items-center justify-center shrink-0">
+                  <Calendar className="w-5 h-5 text-primary" />
+                </div>
+                <div className="flex-1 min-w-0">
+                  <p className="font-semibold text-sm text-foreground truncate">{rdv.name}</p>
+                  {rdv.doctor_name && <p className="text-xs text-muted-foreground">{rdv.doctor_name}</p>}
+                  <div className="flex items-center gap-1 mt-0.5">
+                    <Clock className="w-3 h-3 text-muted-foreground" />
+                    <span className="text-[11px] text-muted-foreground">{formatApptDate(rdv.visit_date!, rdv.visit_time)}</span>
+                  </div>
+                </div>
+                <ChevronRight className="w-4 h-4 text-muted-foreground shrink-0" />
+              </div>
+            ))
+          ) : (
+            <div className="medical-card flex items-center gap-3 cursor-pointer active:scale-[0.98] transition-transform" onClick={() => navigate("/appointments")}>
               <div className="w-10 h-10 rounded-xl bg-medical-light-blue flex items-center justify-center shrink-0">
                 <Calendar className="w-5 h-5 text-primary" />
               </div>
               <div className="flex-1 min-w-0">
-                <p className="font-semibold text-sm text-foreground truncate">{rdv.name}</p>
-                <p className="text-xs text-muted-foreground">{rdv.doctor}</p>
-                <div className="flex items-center gap-1 mt-0.5">
-                  <Clock className="w-3 h-3 text-muted-foreground" />
-                  <span className="text-[11px] text-muted-foreground">{rdv.date} à {rdv.time}</span>
-                </div>
+                <p className="font-semibold text-sm text-foreground">Aucun rendez-vous à venir</p>
+                <p className="text-xs text-muted-foreground">Planifiez une consultation</p>
               </div>
-              <span className="text-[10px] font-medium text-primary bg-accent px-2 py-1 rounded-full shrink-0">{rdv.type}</span>
+              <ChevronRight className="w-4 h-4 text-muted-foreground shrink-0" />
             </div>
-          ))}
+          )}
         </section>
 
         {/* Documents CTA */}
