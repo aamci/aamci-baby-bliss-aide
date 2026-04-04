@@ -40,7 +40,7 @@ const Dashboard = () => {
       <div className="px-4 pt-4 pb-4 space-y-5">
         {/* Header */}
         <div className="flex items-center justify-between">
-          <button onClick={() => navigate("/home")} className="p-2 -ml-2 rounded-xl active:bg-muted transition-colors">
+          <button onClick={() => navigate("/")} className="p-2 -ml-2 rounded-xl active:bg-muted transition-colors">
             <ArrowLeft className="w-5 h-5 text-foreground" />
           </button>
           <h1 className="text-lg font-bold text-foreground">Tableau de bord</h1>

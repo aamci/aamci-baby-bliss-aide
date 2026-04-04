@@ -2,7 +2,7 @@ import { Home, Bot, BookOpen, TrendingUp, User } from "lucide-react";
 import { useLocation, useNavigate } from "react-router-dom";
 
 const tabs = [
-  { icon: Home, label: "Accueil", path: "/home" },
+  { icon: Home, label: "Accueil", path: "/" },
   { icon: Bot, label: "Assistant", path: "/assistant" },
   { icon: BookOpen, label: "Contenus", path: "/contents" },
   { icon: TrendingUp, label: "Suivi", path: "/tracking" },

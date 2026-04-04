@@ -19,7 +19,7 @@ const NotFound = () => {
         <h1 className="text-2xl font-bold text-foreground">Page introuvable</h1>
         <p className="text-sm text-muted-foreground">La page que vous recherchez n'existe pas ou a été déplacée.</p>
         <button
-          onClick={() => navigate("/home")}
+          onClick={() => navigate("/")}
           className="inline-flex items-center gap-2 bg-primary text-primary-foreground font-semibold text-sm px-6 py-3 rounded-xl"
         >
           <ArrowLeft className="w-4 h-4" /> Retour à l'accueil
