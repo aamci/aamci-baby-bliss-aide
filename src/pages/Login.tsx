@@ -26,7 +26,7 @@ const Login = () => {
       toast.error(error.message === "Invalid login credentials" ? "Email ou mot de passe incorrect" : error.message);
     } else {
       toast.success("Connexion réussie !");
-      navigate("/home");
+      navigate("/");
     }
   };
 
@@ -45,7 +45,7 @@ const Login = () => {
   const handleGoogleLogin = async () => {
     const { error } = await supabase.auth.signInWithOAuth({
       provider: "google",
-      options: { redirectTo: window.location.origin + "/home" },
+      options: { redirectTo: window.location.origin + "/" },
     });
     if (error) toast.error(error.message);
   };
