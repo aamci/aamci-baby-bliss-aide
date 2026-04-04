@@ -23,6 +23,7 @@ import CoParenting from "./pages/CoParenting";
 import SavedContents from "./pages/SavedContents";
 import Teleconsultation from "./pages/Teleconsultation";
 import Appointments from "./pages/Appointments";
+import Dashboard from "./pages/Dashboard";
 import AppLayout from "./components/AppLayout";
 import NotFound from "./pages/NotFound";
 
