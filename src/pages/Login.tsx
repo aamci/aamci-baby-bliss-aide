@@ -26,7 +26,7 @@ const Login = () => {
       toast.error(error.message === "Invalid login credentials" ? "Email ou mot de passe incorrect" : error.message);
     } else {
       toast.success("Connexion réussie !");
-      navigate("/");
+      navigate("/home");
     }
   };
 

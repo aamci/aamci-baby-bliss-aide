@@ -1,8 +1,11 @@
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
 import { useChildren, useChildAge } from "@/hooks/useChildren";
-import { Baby, ChevronRight, Sparkles } from "lucide-react";
+import { useAppointments } from "@/hooks/useAppointments";
+import { Baby, ChevronRight, Sparkles, Calendar, Clock } from "lucide-react";
 import { motion } from "framer-motion";
+import { format, parseISO, isFuture, isToday, isTomorrow } from "date-fns";
+import { fr } from "date-fns/locale";
 import PageTransition from "@/components/PageTransition";
 
 const Home = () => {
@@ -12,9 +15,22 @@ const Home = () => {
   const firstChild = children?.[0];
   const childAge = useChildAge(firstChild?.birth_date);
   const parentName = profile?.first_name || "Parent";
+  const { data: appointments = [] } = useAppointments(firstChild?.id);
 
   const hour = new Date().getHours();
   const greeting = hour < 12 ? "Bonjour" : hour < 18 ? "Bon après-midi" : "Bonsoir";
+
+  const upcomingAppts = appointments
+    .filter((a) => a.visit_date && a.status !== "done" && isFuture(parseISO(a.visit_date)))
+    .slice(0, 3);
+
+  const formatApptDate = (dateStr: string, visitTime?: string | null) => {
+    const d = parseISO(dateStr);
+    const timeStr = visitTime ? ` à ${visitTime.slice(0, 5)}` : "";
+    if (isToday(d)) return `Aujourd'hui${timeStr}`;
+    if (isTomorrow(d)) return `Demain${timeStr}`;
+    return format(d, "d MMM yyyy", { locale: fr }) + timeStr;
+  };
 
   return (
     <PageTransition>
@@ -41,16 +57,16 @@ const Home = () => {
             initial={{ scale: 0, opacity: 0 }}
             animate={{ scale: 1, opacity: 1 }}
             transition={{ type: "spring", stiffness: 200, damping: 20, delay: 0.1 }}
-            className="mb-8"
+            className="mb-6"
           >
             {firstChild ? (
-              <div className="w-28 h-28 rounded-full bg-gradient-to-br from-primary to-primary/70 flex items-center justify-center shadow-lg"
+              <div className="w-24 h-24 rounded-full bg-gradient-to-br from-primary to-primary/70 flex items-center justify-center shadow-lg"
                 style={{ boxShadow: "0 12px 40px -8px hsl(200 95% 45% / 0.35)" }}>
-                <Baby className="w-14 h-14 text-primary-foreground" />
+                <Baby className="w-12 h-12 text-primary-foreground" />
               </div>
             ) : (
-              <div className="w-28 h-28 rounded-full bg-gradient-to-br from-primary/20 to-accent flex items-center justify-center">
-                <Sparkles className="w-14 h-14 text-primary" />
+              <div className="w-24 h-24 rounded-full bg-gradient-to-br from-primary/20 to-accent flex items-center justify-center">
+                <Sparkles className="w-12 h-12 text-primary" />
               </div>
             )}
           </motion.div>
@@ -60,7 +76,7 @@ const Home = () => {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.25, duration: 0.5 }}
-            className="text-3xl font-extrabold text-foreground mb-2"
+            className="text-2xl font-extrabold text-foreground mb-1"
           >
             {greeting}, {parentName} 👋
           </motion.h1>
@@ -73,7 +89,7 @@ const Home = () => {
           >
             {firstChild ? (
               <div className="space-y-1">
-                <p className="text-lg text-muted-foreground">
+                <p className="text-base text-muted-foreground">
                   {firstChild.first_name} · <span className="text-primary font-semibold">{childAge}</span>
                 </p>
                 {children && children.length > 1 && (
@@ -83,11 +99,54 @@ const Home = () => {
                 )}
               </div>
             ) : (
-              <p className="text-base text-muted-foreground max-w-xs">
+              <p className="text-sm text-muted-foreground max-w-xs">
                 Commencez par ajouter votre enfant pour personnaliser le suivi
               </p>
             )}
           </motion.div>
+
+          {/* Upcoming appointments */}
+          {upcomingAppts.length > 0 && (
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.55, duration: 0.5 }}
+              className="mt-6 w-full max-w-sm"
+            >
+              <div className="bg-card/80 backdrop-blur-sm rounded-2xl border border-border/50 p-4 space-y-3">
+                <div className="flex items-center justify-between">
+                  <h2 className="text-sm font-bold text-foreground">Prochains RDV</h2>
+                  <button
+                    onClick={() => navigate("/appointments")}
+                    className="text-xs font-semibold text-primary flex items-center gap-0.5"
+                  >
+                    Voir tout <ChevronRight className="w-3 h-3" />
+                  </button>
+                </div>
+                {upcomingAppts.map((rdv) => (
+                  <button
+                    key={rdv.id}
+                    onClick={() => navigate("/appointments")}
+                    className="w-full flex items-center gap-3 text-left active:scale-[0.98] transition-transform"
+                  >
+                    <div className="w-9 h-9 rounded-xl bg-primary/10 flex items-center justify-center shrink-0">
+                      <Calendar className="w-4 h-4 text-primary" />
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <p className="font-semibold text-sm text-foreground truncate">{rdv.name}</p>
+                      <div className="flex items-center gap-1">
+                        <Clock className="w-3 h-3 text-muted-foreground" />
+                        <span className="text-[11px] text-muted-foreground">
+                          {formatApptDate(rdv.visit_date!, rdv.visit_time)}
+                        </span>
+                      </div>
+                    </div>
+                    <ChevronRight className="w-4 h-4 text-muted-foreground shrink-0" />
+                  </button>
+                ))}
+              </div>
+            </motion.div>
+          )}
         </div>
 
         {/* CTA Button */}
@@ -95,7 +154,7 @@ const Home = () => {
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.6, duration: 0.5 }}
-          className="relative z-10 px-8 pb-8"
+          className="relative z-10 px-8 pb-6"
         >
           <button
             onClick={() => navigate("/dashboard")}

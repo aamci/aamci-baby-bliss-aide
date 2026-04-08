@@ -11,7 +11,7 @@ import Home from "./pages/Home";
 const PublicOrHome = () => {
   const { session, loading } = useAuth();
   if (loading) return null;
-  if (session) return <Home />;
+  if (session) return <Navigate to="/home" replace />;
   return <Onboarding />;
 };
 import Assistant from "./pages/Assistant";
@@ -50,6 +50,7 @@ const App = () => (
             <Route path="/reset-password" element={<ResetPassword />} />
             <Route path="/" element={<PublicOrHome />} />
             <Route element={<ProtectedRoute><AppLayout /></ProtectedRoute>}>
+              <Route path="/home" element={<Home />} />
               <Route path="/dashboard" element={<Dashboard />} />
               <Route path="/contents" element={<Contents />} />
               <Route path="/tracking" element={<Tracking />} />
