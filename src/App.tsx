@@ -2,11 +2,18 @@ import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { BrowserRouter, Routes, Route } from "react-router-dom";
-import { AuthProvider } from "@/contexts/AuthContext";
+import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
+import { AuthProvider, useAuth } from "@/contexts/AuthContext";
 import ProtectedRoute from "@/components/ProtectedRoute";
 import Onboarding from "./pages/Onboarding";
 import Home from "./pages/Home";
+
+const PublicOrHome = () => {
+  const { session, loading } = useAuth();
+  if (loading) return null;
+  if (session) return <Home />;
+  return <Onboarding />;
+};
 import Assistant from "./pages/Assistant";
 import Contents from "./pages/Contents";
 import Tracking from "./pages/Tracking";
