@@ -26,7 +26,7 @@ const ResetPassword = () => {
     const { error } = await supabase.auth.updateUser({ password });
     setLoading(false);
     if (error) toast.error(error.message);
-    else { toast.success("Mot de passe mis à jour !"); navigate("/"); }
+    else { toast.success("Mot de passe mis à jour !"); navigate("/home"); }
   };
 
   return (
