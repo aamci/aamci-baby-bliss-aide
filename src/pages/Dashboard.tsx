@@ -23,6 +23,7 @@ const Dashboard = () => {
   const childAge = useChildAge(firstChild?.birth_date);
   const parentName = profile?.first_name || "Parent";
   const { data: appointments = [] } = useAppointments(firstChild?.id);
+  const { count: unreadCount } = useUnreadNotifications();
 
   const upcomingAppts = appointments
     .filter((a) => a.visit_date && a.status !== "done" && isFuture(parseISO(a.visit_date)))
@@ -45,9 +46,17 @@ const Dashboard = () => {
             <ArrowLeft className="w-5 h-5 text-foreground" />
           </button>
           <h1 className="text-lg font-bold text-foreground">Tableau de bord</h1>
-          <button className="relative p-2 -mr-2" onClick={() => navigate("/notifications")} aria-label="Notifications">
+          <button
+            className="relative p-2 -mr-2"
+            onClick={() => navigate("/notifications")}
+            aria-label={`Notifications${unreadCount > 0 ? `, ${unreadCount} non lue${unreadCount > 1 ? "s" : ""}` : ""}`}
+          >
             <Bell className="w-5 h-5 text-muted-foreground" />
-            <span className="absolute top-1.5 right-1.5 w-2 h-2 rounded-full bg-destructive" />
+            {unreadCount > 0 && (
+              <span className="absolute -top-0.5 -right-0.5 min-w-[18px] h-[18px] px-1 rounded-full bg-destructive text-destructive-foreground text-[10px] font-bold flex items-center justify-center">
+                {unreadCount > 9 ? "9+" : unreadCount}
+              </span>
+            )}
           </button>
         </div>
 
