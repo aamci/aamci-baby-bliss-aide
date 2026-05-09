@@ -342,6 +342,39 @@ const ChildProfile = () => {
                 Annuler
               </Button>
             )}
+
+            {!isNew && selectedChild && (
+              <AlertDialog>
+                <AlertDialogTrigger asChild>
+                  <Button
+                    variant="ghost"
+                    className="w-full text-sm text-destructive hover:text-destructive hover:bg-destructive/10"
+                    disabled={deleting}
+                  >
+                    <Trash2 className="w-4 h-4 mr-2" />
+                    Supprimer ce profil
+                  </Button>
+                </AlertDialogTrigger>
+                <AlertDialogContent>
+                  <AlertDialogHeader>
+                    <AlertDialogTitle>Supprimer {selectedChild.first_name} ?</AlertDialogTitle>
+                    <AlertDialogDescription>
+                      Cette action est définitive. Toutes les données associées (visites, vaccins,
+                      mesures, étapes, documents) seront supprimées.
+                    </AlertDialogDescription>
+                  </AlertDialogHeader>
+                  <AlertDialogFooter>
+                    <AlertDialogCancel>Annuler</AlertDialogCancel>
+                    <AlertDialogAction
+                      onClick={handleDelete}
+                      className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+                    >
+                      Supprimer définitivement
+                    </AlertDialogAction>
+                  </AlertDialogFooter>
+                </AlertDialogContent>
+              </AlertDialog>
+            )}
           </div>
         </div>
       </div>
