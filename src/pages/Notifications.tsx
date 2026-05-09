@@ -111,6 +111,7 @@ const Notifications = () => {
         {notifs.map((n) => (
           <div
             key={n.id}
+            onClick={() => !n.read && markRead(n.id)}
             className={`medical-card flex items-start gap-3 cursor-pointer transition-all hover:scale-[1.01] ${!n.read ? "border-l-4 border-primary" : ""}`}
           >
             <div className={`w-10 h-10 rounded-xl ${n.color} flex items-center justify-center shrink-0 mt-0.5`}>
