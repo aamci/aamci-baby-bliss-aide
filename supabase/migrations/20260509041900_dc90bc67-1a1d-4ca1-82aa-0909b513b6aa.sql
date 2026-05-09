@@ -1,0 +1,2 @@
+CREATE POLICY "Inviters can delete their pending invites" ON public.co_parent_invites FOR DELETE TO authenticated USING (invited_by = auth.uid());
+CREATE POLICY "Inviters can update their invites" ON public.co_parent_invites FOR UPDATE TO authenticated USING (invited_by = auth.uid()) WITH CHECK (invited_by = auth.uid());
