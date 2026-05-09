@@ -1,10 +1,21 @@
-import { ArrowLeft, Camera, Save, Plus, Baby, ChevronRight } from "lucide-react";
+import { ArrowLeft, Camera, Save, Plus, Baby, Trash2 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
-import { useChildren, useCreateChild, useUpdateChild, useChildAge, Child } from "@/hooks/useChildren";
+import { useChildren, useCreateChild, useUpdateChild, useDeleteChild, useChildAge, Child } from "@/hooks/useChildren";
 import { toast } from "sonner";
 import PageTransition from "@/components/PageTransition";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
 
 const emptyForm = {
   first_name: "",
@@ -22,12 +33,14 @@ const ChildProfile = () => {
   const { data: children, isLoading } = useChildren();
   const createChild = useCreateChild();
   const updateChild = useUpdateChild();
+  const deleteChild = useDeleteChild();
 
   const [selectedChildId, setSelectedChildId] = useState<string | null>(null);
   const [isNew, setIsNew] = useState(false);
   const [form, setForm] = useState({ ...emptyForm });
   const [allergyInput, setAllergyInput] = useState("");
   const [saving, setSaving] = useState(false);
+  const [deleting, setDeleting] = useState(false);
 
   const selectedChild = children?.find((c) => c.id === selectedChildId) ?? null;
   const childAge = useChildAge(selectedChild?.birth_date);
@@ -114,6 +127,27 @@ const ChildProfile = () => {
       toast.error(e.message || "Erreur lors de la sauvegarde");
     }
     setSaving(false);
+  };
+
+  const handleDelete = async () => {
+    if (!selectedChild) return;
+    setDeleting(true);
+    try {
+      await deleteChild.mutateAsync(selectedChild.id);
+      toast.success(`${selectedChild.first_name} a été supprimé`);
+      const remaining = (children || []).filter((c) => c.id !== selectedChild.id);
+      if (remaining.length > 0) {
+        setSelectedChildId(remaining[0].id);
+        setIsNew(false);
+      } else {
+        setSelectedChildId(null);
+        setIsNew(true);
+        setForm({ ...emptyForm });
+      }
+    } catch (e: any) {
+      toast.error(e.message || "Suppression impossible");
+    }
+    setDeleting(false);
   };
 
   if (isLoading) {
