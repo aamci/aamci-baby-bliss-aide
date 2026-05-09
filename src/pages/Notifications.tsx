@@ -1,6 +1,7 @@
 import { ArrowLeft, Calendar, Syringe, Bot, FileText, Users, Bell, Settings } from "lucide-react";
 import { useNavigate } from "react-router-dom";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { useUnreadNotifications } from "@/hooks/useUnreadNotifications";
 
 const notifications = [
   {
@@ -57,13 +58,22 @@ const notifications = [
 
 const Notifications = () => {
   const navigate = useNavigate();
-  const [notifs, setNotifs] = useState(notifications);
+  const { count: unreadCount, markAllRead, markRead } = useUnreadNotifications();
+  const [readIds, setReadIds] = useState<Set<number>>(new Set());
 
-  const markAllRead = () => {
-    setNotifs(notifs.map((n) => ({ ...n, read: true })));
-  };
+  useEffect(() => {
+    try {
+      const raw = localStorage.getItem("notifications:read-ids");
+      setReadIds(new Set(raw ? (JSON.parse(raw) as number[]) : []));
+    } catch {
+      setReadIds(new Set());
+    }
+  }, [unreadCount]);
 
-  const unreadCount = notifs.filter((n) => !n.read).length;
+  const notifs = notifications.map((n) => ({
+    ...n,
+    read: n.read || readIds.has(n.id),
+  }));
 
   return (
     <div className="min-h-screen bg-background max-w-lg mx-auto">
