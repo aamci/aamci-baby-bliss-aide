@@ -1,6 +1,7 @@
 import { ArrowLeft, Calendar, Syringe, Bot, FileText, Users, Bell, Settings } from "lucide-react";
 import { useNavigate } from "react-router-dom";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { useUnreadNotifications } from "@/hooks/useUnreadNotifications";
 
 const notifications = [
   {
@@ -57,13 +58,22 @@ const notifications = [
 
 const Notifications = () => {
   const navigate = useNavigate();
-  const [notifs, setNotifs] = useState(notifications);
+  const { count: unreadCount, markAllRead, markRead } = useUnreadNotifications();
+  const [readIds, setReadIds] = useState<Set<number>>(new Set());
 
-  const markAllRead = () => {
-    setNotifs(notifs.map((n) => ({ ...n, read: true })));
-  };
+  useEffect(() => {
+    try {
+      const raw = localStorage.getItem("notifications:read-ids");
+      setReadIds(new Set(raw ? (JSON.parse(raw) as number[]) : []));
+    } catch {
+      setReadIds(new Set());
+    }
+  }, [unreadCount]);
 
-  const unreadCount = notifs.filter((n) => !n.read).length;
+  const notifs = notifications.map((n) => ({
+    ...n,
+    read: n.read || readIds.has(n.id),
+  }));
 
   return (
     <div className="min-h-screen bg-background max-w-lg mx-auto">
@@ -101,6 +111,7 @@ const Notifications = () => {
         {notifs.map((n) => (
           <div
             key={n.id}
+            onClick={() => !n.read && markRead(n.id)}
             className={`medical-card flex items-start gap-3 cursor-pointer transition-all hover:scale-[1.01] ${!n.read ? "border-l-4 border-primary" : ""}`}
           >
             <div className={`w-10 h-10 rounded-xl ${n.color} flex items-center justify-center shrink-0 mt-0.5`}>
