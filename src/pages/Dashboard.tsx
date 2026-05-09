@@ -1,4 +1,5 @@
 import { Bell, Bot, ChevronRight, Calendar, Syringe, Baby, Heart, Moon, Apple, Brain, Clock, ArrowLeft } from "lucide-react";
+import { useUnreadNotifications } from "@/hooks/useUnreadNotifications";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
 import { useChildren, useChildAge } from "@/hooks/useChildren";
