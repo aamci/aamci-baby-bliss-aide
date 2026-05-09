@@ -89,6 +89,28 @@ export const useUpdateChild = () => {
   });
 };
 
+export const useDeleteChild = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async (childId: string) => {
+      // Best-effort cleanup of related rows (RLS allows parents)
+      await supabase.from("visits").delete().eq("child_id", childId);
+      await supabase.from("vaccines").delete().eq("child_id", childId);
+      await supabase.from("milestones").delete().eq("child_id", childId);
+      await supabase.from("measurements").delete().eq("child_id", childId);
+      await supabase.from("documents").delete().eq("child_id", childId);
+      await supabase.from("child_parents").delete().eq("child_id", childId);
+      const { error } = await supabase.from("children").delete().eq("id", childId);
+      if (error) throw error;
+      return childId;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["children"] });
+    },
+  });
+};
+
 export const useChildAge = (birthDate: string | undefined) => {
   if (!birthDate) return "";
   const birth = new Date(birthDate);
