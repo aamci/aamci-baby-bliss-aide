@@ -1,4 +1,4 @@
-import { ArrowLeft, Plus, FileText, Syringe, ClipboardList, TestTube, Image, Folder, Search, Share2, Upload, Trash2, X, Download } from "lucide-react";
+import { ArrowLeft, Plus, FileText, Syringe, ClipboardList, TestTube, Image, Folder, Search, Share2, Upload, Trash2, X, Download, ShieldCheck } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useState, useEffect, useRef } from "react";
 import { supabase } from "@/integrations/supabase/client";
@@ -173,13 +173,22 @@ const Documents = () => {
                 </p>
               </div>
             </div>
-            <button
-              onClick={() => setShowUpload(true)}
-              className="w-10 h-10 rounded-xl bg-primary flex items-center justify-center text-primary-foreground"
-              aria-label="Ajouter un document"
-            >
-              <Plus className="w-5 h-5" />
-            </button>
+            <div className="flex items-center gap-2">
+              <button
+                onClick={() => navigate("/document-audit")}
+                className="w-10 h-10 rounded-xl bg-muted flex items-center justify-center text-foreground"
+                aria-label="Journal d'audit"
+              >
+                <ShieldCheck className="w-5 h-5" />
+              </button>
+              <button
+                onClick={() => setShowUpload(true)}
+                className="w-10 h-10 rounded-xl bg-primary flex items-center justify-center text-primary-foreground"
+                aria-label="Ajouter un document"
+              >
+                <Plus className="w-5 h-5" />
+              </button>
+            </div>
           </div>
 
           {/* Storage bar */}
