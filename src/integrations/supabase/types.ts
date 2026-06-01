@@ -159,6 +159,39 @@ export type Database = {
           },
         ]
       }
+      document_audit_logs: {
+        Row: {
+          action: string
+          child_id: string
+          created_at: string
+          document_id: string | null
+          file_name: string | null
+          id: string
+          metadata: Json | null
+          user_id: string
+        }
+        Insert: {
+          action: string
+          child_id: string
+          created_at?: string
+          document_id?: string | null
+          file_name?: string | null
+          id?: string
+          metadata?: Json | null
+          user_id: string
+        }
+        Update: {
+          action?: string
+          child_id?: string
+          created_at?: string
+          document_id?: string | null
+          file_name?: string | null
+          id?: string
+          metadata?: Json | null
+          user_id?: string
+        }
+        Relationships: []
+      }
       documents: {
         Row: {
           category: string

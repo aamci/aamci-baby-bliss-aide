@@ -1,4 +1,4 @@
-import { ArrowLeft, Plus, FileText, Syringe, ClipboardList, TestTube, Image, Folder, Search, Share2, Upload, Trash2, X, Download } from "lucide-react";
+import { ArrowLeft, Plus, FileText, Syringe, ClipboardList, TestTube, Image, Folder, Search, Share2, Upload, Trash2, X, Download, ShieldCheck } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useState, useEffect, useRef } from "react";
 import { supabase } from "@/integrations/supabase/client";
@@ -74,6 +74,20 @@ const Documents = () => {
     fetchDocs();
   }, [firstChild]);
 
+  const logAudit = async (
+    action: "view" | "download" | "upload" | "delete",
+    doc: { id?: string; child_id: string; file_name: string }
+  ) => {
+    if (!user) return;
+    await supabase.from("document_audit_logs").insert({
+      user_id: user.id,
+      document_id: doc.id ?? null,
+      child_id: doc.child_id,
+      action,
+      file_name: doc.file_name,
+    });
+  };
+
   const handleUpload = async () => {
     if (!selectedFile || !firstChild || !user) return;
     setUploading(true);
@@ -90,7 +104,7 @@ const Documents = () => {
       return;
     }
 
-    const { error: dbErr } = await supabase.from("documents").insert({
+    const { data: inserted, error: dbErr } = await supabase.from("documents").insert({
       child_id: firstChild.id,
       uploaded_by: user.id,
       file_name: selectedFile.name,
@@ -98,11 +112,12 @@ const Documents = () => {
       file_size: selectedFile.size,
       category: uploadCat,
       doctor_name: uploadDoctor || null,
-    });
+    }).select().single();
 
     if (dbErr) {
       toast.error("Erreur : " + dbErr.message);
     } else {
+      await logAudit("upload", { id: inserted?.id, child_id: firstChild.id, file_name: selectedFile.name });
       toast.success("Document ajouté !");
       setShowUpload(false);
       setSelectedFile(null);
@@ -115,6 +130,7 @@ const Documents = () => {
   const handleDelete = async (doc: Doc) => {
     await supabase.storage.from("medical-documents").remove([doc.file_path]);
     await supabase.from("documents").delete().eq("id", doc.id);
+    await logAudit("delete", { id: doc.id, child_id: doc.child_id, file_name: doc.file_name });
     toast.success("Document supprimé");
     fetchDocs();
   };
@@ -124,6 +140,7 @@ const Documents = () => {
       .from("medical-documents")
       .createSignedUrl(doc.file_path, 60);
     if (data?.signedUrl) {
+      await logAudit("download", { id: doc.id, child_id: doc.child_id, file_name: doc.file_name });
       window.open(data.signedUrl, "_blank");
     }
   };
@@ -156,13 +173,22 @@ const Documents = () => {
                 </p>
               </div>
             </div>
-            <button
-              onClick={() => setShowUpload(true)}
-              className="w-10 h-10 rounded-xl bg-primary flex items-center justify-center text-primary-foreground"
-              aria-label="Ajouter un document"
-            >
-              <Plus className="w-5 h-5" />
-            </button>
+            <div className="flex items-center gap-2">
+              <button
+                onClick={() => navigate("/document-audit")}
+                className="w-10 h-10 rounded-xl bg-muted flex items-center justify-center text-foreground"
+                aria-label="Journal d'audit"
+              >
+                <ShieldCheck className="w-5 h-5" />
+              </button>
+              <button
+                onClick={() => setShowUpload(true)}
+                className="w-10 h-10 rounded-xl bg-primary flex items-center justify-center text-primary-foreground"
+                aria-label="Ajouter un document"
+              >
+                <Plus className="w-5 h-5" />
+              </button>
+            </div>
           </div>
 
           {/* Storage bar */}

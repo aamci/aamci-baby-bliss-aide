@@ -31,6 +31,7 @@ import SavedContents from "./pages/SavedContents";
 import Teleconsultation from "./pages/Teleconsultation";
 import Appointments from "./pages/Appointments";
 import Dashboard from "./pages/Dashboard";
+import DocumentAudit from "./pages/DocumentAudit";
 import AppLayout from "./components/AppLayout";
 import NotFound from "./pages/NotFound";
 
@@ -66,6 +67,7 @@ const App = () => (
             <Route path="/coparenting" element={<ProtectedRoute><CoParenting /></ProtectedRoute>} />
             <Route path="/saved-contents" element={<ProtectedRoute><SavedContents /></ProtectedRoute>} />
             <Route path="/teleconsultation" element={<ProtectedRoute><Teleconsultation /></ProtectedRoute>} />
+            <Route path="/document-audit" element={<ProtectedRoute><DocumentAudit /></ProtectedRoute>} />
             <Route path="*" element={<NotFound />} />
           </Routes>
         </AuthProvider>
