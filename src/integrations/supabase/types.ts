@@ -14,6 +14,39 @@ export type Database = {
   }
   public: {
     Tables: {
+      cgu_acceptances: {
+        Row: {
+          accepted_at: string
+          cgu_version: string
+          created_at: string
+          id: string
+          ip: string | null
+          privacy_version: string
+          user_agent: string | null
+          user_id: string
+        }
+        Insert: {
+          accepted_at?: string
+          cgu_version: string
+          created_at?: string
+          id?: string
+          ip?: string | null
+          privacy_version: string
+          user_agent?: string | null
+          user_id: string
+        }
+        Update: {
+          accepted_at?: string
+          cgu_version?: string
+          created_at?: string
+          id?: string
+          ip?: string | null
+          privacy_version?: string
+          user_agent?: string | null
+          user_id?: string
+        }
+        Relationships: []
+      }
       chat_messages: {
         Row: {
           content: string
@@ -158,6 +191,39 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      consent_logs: {
+        Row: {
+          action: string
+          categories: Json
+          created_at: string
+          id: string
+          ip: string | null
+          policy_version: string
+          user_agent: string | null
+          user_id: string | null
+        }
+        Insert: {
+          action: string
+          categories?: Json
+          created_at?: string
+          id?: string
+          ip?: string | null
+          policy_version: string
+          user_agent?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          action?: string
+          categories?: Json
+          created_at?: string
+          id?: string
+          ip?: string | null
+          policy_version?: string
+          user_agent?: string | null
+          user_id?: string | null
+        }
+        Relationships: []
       }
       document_audit_logs: {
         Row: {
@@ -387,6 +453,45 @@ export type Database = {
         }
         Relationships: []
       }
+      rgpd_requests: {
+        Row: {
+          created_at: string
+          id: string
+          payload: Json | null
+          processed_at: string | null
+          requested_at: string
+          result_url: string | null
+          status: Database["public"]["Enums"]["rgpd_request_status"]
+          type: Database["public"]["Enums"]["rgpd_request_type"]
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          payload?: Json | null
+          processed_at?: string | null
+          requested_at?: string
+          result_url?: string | null
+          status?: Database["public"]["Enums"]["rgpd_request_status"]
+          type: Database["public"]["Enums"]["rgpd_request_type"]
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          payload?: Json | null
+          processed_at?: string | null
+          requested_at?: string
+          result_url?: string | null
+          status?: Database["public"]["Enums"]["rgpd_request_status"]
+          type?: Database["public"]["Enums"]["rgpd_request_type"]
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       saved_articles: {
         Row: {
           article_author: string | null
@@ -413,6 +518,33 @@ export type Database = {
           article_title?: string
           created_at?: string
           id?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      user_consents: {
+        Row: {
+          created_at: string
+          granted: boolean
+          id: string
+          scope: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          granted?: boolean
+          id?: string
+          scope: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          granted?: boolean
+          id?: string
+          scope?: string
+          updated_at?: string
           user_id?: string
         }
         Relationships: []
@@ -513,7 +645,13 @@ export type Database = {
       }
     }
     Enums: {
-      [_ in never]: never
+      rgpd_request_status: "pending" | "processing" | "completed" | "rejected"
+      rgpd_request_type:
+        | "access"
+        | "export"
+        | "delete"
+        | "rectification"
+        | "consent_withdrawal"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -640,6 +778,15 @@ export type CompositeTypes<
 
 export const Constants = {
   public: {
-    Enums: {},
+    Enums: {
+      rgpd_request_status: ["pending", "processing", "completed", "rejected"],
+      rgpd_request_type: [
+        "access",
+        "export",
+        "delete",
+        "rectification",
+        "consent_withdrawal",
+      ],
+    },
   },
 } as const
