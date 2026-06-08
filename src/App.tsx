@@ -32,6 +32,11 @@ import Teleconsultation from "./pages/Teleconsultation";
 import Appointments from "./pages/Appointments";
 import Dashboard from "./pages/Dashboard";
 import DocumentAudit from "./pages/DocumentAudit";
+import Cgu from "./pages/legal/Cgu";
+import MentionsLegales from "./pages/legal/MentionsLegales";
+import Confidentialite from "./pages/legal/Confidentialite";
+import Rgpd from "./pages/legal/Rgpd";
+import CookieBanner from "./components/legal/CookieBanner";
 import AppLayout from "./components/AppLayout";
 import NotFound from "./pages/NotFound";
 
@@ -49,6 +54,10 @@ const App = () => (
             <Route path="/login" element={<Login />} />
             <Route path="/signup" element={<Signup />} />
             <Route path="/reset-password" element={<ResetPassword />} />
+            <Route path="/legal/cgu" element={<Cgu />} />
+            <Route path="/legal/mentions-legales" element={<MentionsLegales />} />
+            <Route path="/legal/confidentialite" element={<Confidentialite />} />
+            <Route path="/legal/rgpd" element={<ProtectedRoute><Rgpd /></ProtectedRoute>} />
             <Route path="/" element={<PublicOrHome />} />
             <Route element={<ProtectedRoute><AppLayout /></ProtectedRoute>}>
               <Route path="/home" element={<Home />} />
@@ -70,6 +79,7 @@ const App = () => (
             <Route path="/document-audit" element={<ProtectedRoute><DocumentAudit /></ProtectedRoute>} />
             <Route path="*" element={<NotFound />} />
           </Routes>
+          <CookieBanner />
         </AuthProvider>
       </BrowserRouter>
     </TooltipProvider>
