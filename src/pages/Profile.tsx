@@ -1,5 +1,6 @@
-import { Baby, Bell, Lock, CreditCard, LogOut, ChevronRight, Shield, Users, FileText, Heart, Settings, Save } from "lucide-react";
+import { Baby, Bell, Lock, CreditCard, LogOut, ChevronRight, Shield, Users, FileText, Heart, Settings, Save, Scale, Cookie, BookOpen } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+import { openCookieBanner } from "@/components/legal/CookieBanner";
 import { useAuth } from "@/contexts/AuthContext";
 import { useChildren } from "@/hooks/useChildren";
 import { supabase } from "@/integrations/supabase/client";
@@ -85,7 +86,14 @@ const Profile = () => {
     { icon: FileText, label: "Documents médicaux", desc: "Coffre-fort numérique", path: "/documents" },
     { icon: Lock, label: "Sécurité", desc: "Mot de passe, biométrie, 2FA", path: null },
     { icon: CreditCard, label: "Abonnement", desc: "Gratuit", path: null },
-    { icon: Shield, label: "Confidentialité", desc: "RGPD, données de santé", path: null },
+  ];
+
+  const legalItems = [
+    { icon: Shield, label: "Centre RGPD", desc: "Vos consentements, accès, suppression", action: () => navigate("/legal/rgpd") },
+    { icon: BookOpen, label: "Politique de confidentialité", desc: "Vos données et vos droits", action: () => navigate("/legal/confidentialite") },
+    { icon: Scale, label: "CGU", desc: "Conditions générales d'utilisation", action: () => navigate("/legal/cgu") },
+    { icon: FileText, label: "Mentions légales", desc: "Éditeur, hébergeur HDS", action: () => navigate("/legal/mentions-legales") },
+    { icon: Cookie, label: "Gérer mes cookies", desc: "Revoir mes préférences", action: () => openCookieBanner() },
   ];
 
   return (
@@ -222,6 +230,29 @@ const Profile = () => {
             <button
               key={i}
               onClick={() => item.path && navigate(item.path)}
+              className="w-full flex items-center gap-3 p-3 rounded-xl hover:bg-muted active:bg-muted/80 transition-colors text-left"
+            >
+              <div className="w-9 h-9 rounded-xl bg-accent flex items-center justify-center shrink-0">
+                <item.icon className="w-4 h-4 text-accent-foreground" />
+              </div>
+              <div className="flex-1 min-w-0">
+                <p className="font-semibold text-sm text-foreground">{item.label}</p>
+                <p className="text-xs text-muted-foreground truncate">{item.desc}</p>
+              </div>
+              <ChevronRight className="w-4 h-4 text-muted-foreground shrink-0" />
+            </button>
+          ))}
+        </div>
+
+        {/* Légal & confidentialité */}
+        <div className="space-y-1">
+          <p className="text-[11px] font-bold text-muted-foreground uppercase tracking-wide px-3">
+            Légal & confidentialité
+          </p>
+          {legalItems.map((item, i) => (
+            <button
+              key={i}
+              onClick={item.action}
               className="w-full flex items-center gap-3 p-3 rounded-xl hover:bg-muted active:bg-muted/80 transition-colors text-left"
             >
               <div className="w-9 h-9 rounded-xl bg-accent flex items-center justify-center shrink-0">

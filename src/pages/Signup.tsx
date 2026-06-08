@@ -1,10 +1,11 @@
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import { Eye, EyeOff, ArrowLeft, Check, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import PageTransition from "@/components/PageTransition";
+import { CGU_VERSION, PRIVACY_VERSION } from "@/lib/legal";
 
 const Signup = () => {
   const navigate = useNavigate();
@@ -59,6 +60,20 @@ const Signup = () => {
     if (error) {
       toast.error(error.message);
     } else {
+      // Persist proof of CGU/privacy acceptance (RGPD)
+      try {
+        const { data: { user } } = await supabase.auth.getUser();
+        if (user) {
+          await supabase.from("cgu_acceptances").insert({
+            user_id: user.id,
+            cgu_version: CGU_VERSION,
+            privacy_version: PRIVACY_VERSION,
+            user_agent: navigator.userAgent,
+          });
+        }
+      } catch (e) {
+        console.warn("cgu acceptance insert failed", e);
+      }
       toast.success("Compte créé ! Vérifiez votre email pour confirmer.");
       navigate("/login");
     }
@@ -153,7 +168,10 @@ const Signup = () => {
             <label className="flex items-start gap-2 pt-1 cursor-pointer">
               <input type="checkbox" checked={form.acceptCgu} onChange={(e) => update("acceptCgu", e.target.checked)} className="rounded border-border mt-0.5" />
               <span className="text-[11px] text-muted-foreground leading-snug">
-                J'accepte les <button className="text-primary font-semibold underline">CGU</button> et la <button className="text-primary font-semibold underline">politique de confidentialité</button> *
+                J'accepte les{" "}
+                <Link to="/legal/cgu" target="_blank" className="text-primary font-semibold underline">CGU</Link>
+                {" "}et la{" "}
+                <Link to="/legal/confidentialite" target="_blank" className="text-primary font-semibold underline">politique de confidentialité</Link> *
               </span>
             </label>
 
