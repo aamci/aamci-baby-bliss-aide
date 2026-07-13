@@ -1,11 +1,14 @@
-import { TrendingUp, Syringe, Calendar, Baby, Plus, Check, Clock, AlertTriangle, X } from "lucide-react";
+import { TrendingUp, Syringe, Calendar, Baby, Plus, Check, Clock, AlertTriangle, X, Moon, Milk, Droplet } from "lucide-react";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { useChildren, useChildAge } from "@/hooks/useChildren";
 import { useMeasurements, useAddMeasurement, useVaccines, useVisits, useMilestones, useToggleMilestone } from "@/hooks/useTracking";
 import { toast } from "sonner";
+import SleepTab from "@/components/tracking/SleepTab";
+import FeedingTab from "@/components/tracking/FeedingTab";
+import DiaperTab from "@/components/tracking/DiaperTab";
 
-const tabs = ["Croissance", "Vaccins", "Visites", "Jalons"];
+const tabs = ["Croissance", "Sommeil", "Repas", "Couches", "Vaccins", "Visites", "Jalons"];
 
 const Tracking = () => {
   const [active, setActive] = useState("Croissance");
@@ -82,12 +85,12 @@ const Tracking = () => {
       </div>
 
       {/* Tabs */}
-      <div className="flex gap-1 bg-muted rounded-xl p-1">
+      <div className="flex gap-1 bg-muted rounded-xl p-1 overflow-x-auto scrollbar-hide">
         {tabs.map((tab) => (
           <button
             key={tab}
             onClick={() => setActive(tab)}
-            className={`flex-1 py-2 text-xs font-semibold rounded-lg transition-all ${
+            className={`flex-1 min-w-fit whitespace-nowrap px-3 py-2 text-xs font-semibold rounded-lg transition-all ${
               active === tab ? "bg-card text-foreground shadow-sm" : "text-muted-foreground"
             }`}
           >
@@ -178,6 +181,10 @@ const Tracking = () => {
           </div>
         </div>
       )}
+
+      {active === "Sommeil" && <SleepTab childId={firstChild?.id} />}
+      {active === "Repas" && <FeedingTab childId={firstChild?.id} />}
+      {active === "Couches" && <DiaperTab childId={firstChild?.id} />}
 
       {/* Vaccins */}
       {active === "Vaccins" && (

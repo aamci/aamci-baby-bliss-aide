@@ -32,6 +32,7 @@ import Teleconsultation from "./pages/Teleconsultation";
 import Appointments from "./pages/Appointments";
 import Dashboard from "./pages/Dashboard";
 import DocumentAudit from "./pages/DocumentAudit";
+import AcceptInvite from "./pages/AcceptInvite";
 import Cgu from "./pages/legal/Cgu";
 import MentionsLegales from "./pages/legal/MentionsLegales";
 import Confidentialite from "./pages/legal/Confidentialite";
@@ -74,6 +75,7 @@ const App = () => (
             <Route path="/child-profile" element={<ProtectedRoute><ChildProfile /></ProtectedRoute>} />
             <Route path="/notification-settings" element={<ProtectedRoute><NotificationSettings /></ProtectedRoute>} />
             <Route path="/coparenting" element={<ProtectedRoute><CoParenting /></ProtectedRoute>} />
+            <Route path="/coparenting/accept" element={<AcceptInvite />} />
             <Route path="/saved-contents" element={<ProtectedRoute><SavedContents /></ProtectedRoute>} />
             <Route path="/teleconsultation" element={<ProtectedRoute><Teleconsultation /></ProtectedRoute>} />
             <Route path="/document-audit" element={<ProtectedRoute><DocumentAudit /></ProtectedRoute>} />
