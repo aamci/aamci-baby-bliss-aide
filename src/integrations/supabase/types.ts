@@ -225,6 +225,47 @@ export type Database = {
         }
         Relationships: []
       }
+      diaper_logs: {
+        Row: {
+          changed_at: string
+          child_id: string
+          created_at: string
+          id: string
+          kind: string
+          notes: string | null
+          recorded_by: string
+          updated_at: string
+        }
+        Insert: {
+          changed_at?: string
+          child_id: string
+          created_at?: string
+          id?: string
+          kind: string
+          notes?: string | null
+          recorded_by: string
+          updated_at?: string
+        }
+        Update: {
+          changed_at?: string
+          child_id?: string
+          created_at?: string
+          id?: string
+          kind?: string
+          notes?: string | null
+          recorded_by?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "diaper_logs_child_id_fkey"
+            columns: ["child_id"]
+            isOneToOne: false
+            referencedRelation: "children"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       document_audit_logs: {
         Row: {
           action: string
@@ -298,6 +339,59 @@ export type Database = {
         Relationships: [
           {
             foreignKeyName: "documents_child_id_fkey"
+            columns: ["child_id"]
+            isOneToOne: false
+            referencedRelation: "children"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      feeding_logs: {
+        Row: {
+          amount_ml: number | null
+          child_id: string
+          created_at: string
+          duration_min: number | null
+          fed_at: string
+          food: string | null
+          id: string
+          kind: string
+          notes: string | null
+          recorded_by: string
+          side: string | null
+          updated_at: string
+        }
+        Insert: {
+          amount_ml?: number | null
+          child_id: string
+          created_at?: string
+          duration_min?: number | null
+          fed_at?: string
+          food?: string | null
+          id?: string
+          kind: string
+          notes?: string | null
+          recorded_by: string
+          side?: string | null
+          updated_at?: string
+        }
+        Update: {
+          amount_ml?: number | null
+          child_id?: string
+          created_at?: string
+          duration_min?: number | null
+          fed_at?: string
+          food?: string | null
+          id?: string
+          kind?: string
+          notes?: string | null
+          recorded_by?: string
+          side?: string | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "feeding_logs_child_id_fkey"
             columns: ["child_id"]
             isOneToOne: false
             referencedRelation: "children"
@@ -522,6 +616,53 @@ export type Database = {
         }
         Relationships: []
       }
+      sleep_logs: {
+        Row: {
+          child_id: string
+          created_at: string
+          duration_min: number | null
+          end_at: string | null
+          id: string
+          kind: string
+          notes: string | null
+          recorded_by: string
+          start_at: string
+          updated_at: string
+        }
+        Insert: {
+          child_id: string
+          created_at?: string
+          duration_min?: number | null
+          end_at?: string | null
+          id?: string
+          kind?: string
+          notes?: string | null
+          recorded_by: string
+          start_at: string
+          updated_at?: string
+        }
+        Update: {
+          child_id?: string
+          created_at?: string
+          duration_min?: number | null
+          end_at?: string | null
+          id?: string
+          kind?: string
+          notes?: string | null
+          recorded_by?: string
+          start_at?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "sleep_logs_child_id_fkey"
+            columns: ["child_id"]
+            isOneToOne: false
+            referencedRelation: "children"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       user_consents: {
         Row: {
           created_at: string
@@ -589,6 +730,60 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      video_capsules: {
+        Row: {
+          age_max_months: number
+          age_min_months: number
+          author: string | null
+          category: string
+          created_at: string
+          description: string | null
+          duration_sec: number | null
+          external_url: string | null
+          id: string
+          published_at: string
+          source_url: string | null
+          storage_path: string | null
+          thumbnail_url: string | null
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          age_max_months?: number
+          age_min_months?: number
+          author?: string | null
+          category?: string
+          created_at?: string
+          description?: string | null
+          duration_sec?: number | null
+          external_url?: string | null
+          id?: string
+          published_at?: string
+          source_url?: string | null
+          storage_path?: string | null
+          thumbnail_url?: string | null
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          age_max_months?: number
+          age_min_months?: number
+          author?: string | null
+          category?: string
+          created_at?: string
+          description?: string | null
+          duration_sec?: number | null
+          external_url?: string | null
+          id?: string
+          published_at?: string
+          source_url?: string | null
+          storage_path?: string | null
+          thumbnail_url?: string | null
+          title?: string
+          updated_at?: string
+        }
+        Relationships: []
       }
       visits: {
         Row: {
