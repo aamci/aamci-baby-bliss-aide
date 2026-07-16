@@ -1,10 +1,11 @@
-import { ArrowLeft, Users, Mail, MessageSquare, Check, Shield, Copy, Loader2 } from "lucide-react";
+import { ArrowLeft, Users, Mail, MessageSquare, Check, Shield, Copy, Loader2, X, Clock } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
 import { useAuth } from "@/contexts/AuthContext";
 import { useChildren } from "@/hooks/useChildren";
+import { useCoParents, useMyInvites, useRevokeInvite } from "@/hooks/useCoParents";
 import { supabase } from "@/integrations/supabase/client";
 import PageTransition from "@/components/PageTransition";
 
@@ -13,6 +14,10 @@ const CoParenting = () => {
   const { user, profile } = useAuth();
   const { data: children } = useChildren();
   const firstChild = children?.[0];
+  const { data: coparents = [] } = useCoParents(firstChild?.id);
+  const { data: invites = [] } = useMyInvites();
+  const revoke = useRevokeInvite();
+  const pendingInvites = invites.filter((i) => i.status === "pending" && (!firstChild || i.child_id === firstChild.id));
   const [inviteMethod, setInviteMethod] = useState<"email" | "sms">("email");
   const [inviteValue, setInviteValue] = useState("");
   const [sent, setSent] = useState(false);
@@ -92,18 +97,43 @@ const CoParenting = () => {
 
           {/* Current co-parents */}
           <div className="medical-card space-y-3 mb-6">
-            <h2 className="text-sm font-bold text-foreground">Parents actuels</h2>
-            <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-full bg-primary flex items-center justify-center text-primary-foreground font-bold text-sm">
-                {parentName[0]?.toUpperCase()}
-              </div>
-              <div className="flex-1">
-                <p className="text-sm font-semibold text-foreground">{parentName}</p>
-                <p className="text-xs text-muted-foreground">Parent principal · Vous</p>
-              </div>
-              <span className="text-[10px] font-semibold text-success bg-medical-light-green px-2 py-1 rounded-full">Actif</span>
-            </div>
+            <h2 className="text-sm font-bold text-foreground">Parents actifs ({coparents.length || 1})</h2>
+            {(coparents.length > 0 ? coparents : [{ parent_id: user?.id, role: "parent", profile: { first_name: parentName, last_name: "" } }]).map((cp: any) => {
+              const name = cp.profile?.first_name ? `${cp.profile.first_name} ${cp.profile.last_name || ""}`.trim() : "Parent";
+              const isMe = cp.parent_id === user?.id;
+              return (
+                <div key={cp.parent_id} className="flex items-center gap-3">
+                  <div className="w-10 h-10 rounded-full bg-primary flex items-center justify-center text-primary-foreground font-bold text-sm shrink-0">{name[0]?.toUpperCase() || "P"}</div>
+                  <div className="flex-1 min-w-0">
+                    <p className="text-sm font-semibold text-foreground truncate">{name}{isMe ? " · Vous" : ""}</p>
+                    <p className="text-xs text-muted-foreground capitalize truncate">{cp.role || "parent"}</p>
+                  </div>
+                  <span className="text-[10px] font-semibold text-success bg-medical-light-green px-2 py-1 rounded-full shrink-0">Actif</span>
+                </div>
+              );
+            })}
           </div>
+
+          {/* Pending invites */}
+          {pendingInvites.length > 0 && (
+            <div className="medical-card space-y-3 mb-6">
+              <h2 className="text-sm font-bold text-foreground flex items-center gap-2"><Clock className="w-4 h-4 text-medical-orange" /> Invitations en attente ({pendingInvites.length})</h2>
+              {pendingInvites.map((inv: any) => {
+                const link = `${window.location.origin}/coparenting/accept?token=${inv.token}`;
+                return (
+                  <div key={inv.id} className="flex items-center gap-3 p-2 rounded-lg bg-muted/50">
+                    <div className="w-9 h-9 rounded-xl bg-medical-light-orange flex items-center justify-center shrink-0"><Mail className="w-4 h-4 text-medical-orange" /></div>
+                    <div className="flex-1 min-w-0">
+                      <p className="text-xs font-semibold text-foreground truncate">{inv.invite_email || inv.invite_phone}</p>
+                      <p className="text-[10px] text-muted-foreground">Envoyé le {new Date(inv.created_at).toLocaleDateString("fr-FR")}</p>
+                    </div>
+                    <button onClick={() => { navigator.clipboard.writeText(link); toast.success("Lien copié !"); }} aria-label="Copier le lien" className="p-2 text-primary active:scale-95"><Copy className="w-4 h-4" /></button>
+                    <button onClick={() => revoke.mutate(inv.id, { onSuccess: () => toast.success("Invitation révoquée") })} aria-label="Révoquer" className="p-2 text-destructive active:scale-95"><X className="w-4 h-4" /></button>
+                  </div>
+                );
+              })}
+            </div>
+          )}
 
           {/* Invite */}
           {!sent ? (
