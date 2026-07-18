@@ -8,6 +8,8 @@ import { useState, useEffect } from "react";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import PageTransition from "@/components/PageTransition";
+import ListenButton from "@/components/ListenButton";
+import { useTTSSettings, VOICE_OPTIONS, LANGUAGE_OPTIONS } from "@/hooks/useTTS";
 
 const Profile = () => {
   const navigate = useNavigate();
@@ -22,6 +24,7 @@ const Profile = () => {
   });
   const [allergyInput, setAllergyInput] = useState("");
   const [saving, setSaving] = useState(false);
+  const { voice, language, setVoice, setLanguage } = useTTSSettings();
 
   useEffect(() => {
     if (profile) {
@@ -265,6 +268,60 @@ const Profile = () => {
               <ChevronRight className="w-4 h-4 text-muted-foreground shrink-0" />
             </button>
           ))}
+        </div>
+
+        {/* Lecture audio */}
+        <div className="medical-card space-y-3">
+          <div>
+            <h3 className="text-sm font-bold text-foreground">Lecture audio (voix naturelle)</h3>
+            <p className="text-[11px] text-muted-foreground mt-0.5">
+              Voix humaines premium pour écouter articles, CGU et politiques. Choisissez la voix qui vous convient.
+            </p>
+          </div>
+          <div>
+            <label htmlFor="tts-voice" className="text-xs font-semibold text-foreground block mb-1">Voix</label>
+            <select
+              id="tts-voice"
+              value={voice}
+              onChange={(e) => setVoice(e.target.value as any)}
+              className="w-full bg-muted rounded-xl px-4 py-2.5 text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-ring"
+            >
+              {VOICE_OPTIONS.map((v) => (
+                <option key={v.value} value={v.value}>{v.label}</option>
+              ))}
+            </select>
+          </div>
+          <div>
+            <label htmlFor="tts-lang" className="text-xs font-semibold text-foreground block mb-1">Langue de lecture</label>
+            <select
+              id="tts-lang"
+              value={language}
+              onChange={(e) => setLanguage(e.target.value as any)}
+              className="w-full bg-muted rounded-xl px-4 py-2.5 text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-ring"
+            >
+              {LANGUAGE_OPTIONS.map((l) => (
+                <option key={l.value} value={l.value}>{l.label}</option>
+              ))}
+            </select>
+            <p className="text-[10px] text-muted-foreground mt-1">
+              Dioula et Baoulé ne sont pas encore disponibles pour la synthèse vocale (aucun modèle actuel ne les supporte). Nous ajouterons ces langues dès qu'un modèle de qualité sera disponible.
+            </p>
+          </div>
+          <div className="pt-1">
+            <ListenButton
+              text={
+                language === "en"
+                  ? "Hello, this is a preview of the selected voice."
+                  : language === "es"
+                    ? "Hola, esta es una prueba de la voz seleccionada."
+                    : language === "ar"
+                      ? "مرحباً، هذا اختبار للصوت المختار."
+                      : "Bonjour, ceci est un aperçu de la voix sélectionnée pour la lecture des articles."
+              }
+              label="Écouter un aperçu"
+              size="sm"
+            />
+          </div>
         </div>
 
         {/* Logout */}

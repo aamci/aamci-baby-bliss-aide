@@ -1,6 +1,7 @@
 import { ArrowLeft, Heart, Share2, Clock, BookmarkPlus, Send } from "lucide-react";
 import { useNavigate, useParams } from "react-router-dom";
 import { useState } from "react";
+import ListenButton from "@/components/ListenButton";
 
 const articlesData: Record<string, {
   title: string;
@@ -71,6 +72,7 @@ const ArticleDetail = () => {
   const [showSources, setShowSources] = useState(false);
 
   const article = articlesData[slug || ""] || articlesData["diversification-alimentaire"];
+  const spokenText = [article.title, ...article.content, `À retenir. ${article.takeaway}`].join(". ");
 
   const categoryColors: Record<string, string> = {
     Nutrition: "bg-medical-light-green text-medical-green",
@@ -128,6 +130,9 @@ const ArticleDetail = () => {
 
         {/* Content */}
         <div className="mt-6 space-y-4">
+          <div className="flex justify-start">
+            <ListenButton text={spokenText} label="Écouter l'article" />
+          </div>
           {article.content.map((p, i) => (
             <p key={i} className="text-sm text-foreground leading-relaxed whitespace-pre-line">{p}</p>
           ))}
