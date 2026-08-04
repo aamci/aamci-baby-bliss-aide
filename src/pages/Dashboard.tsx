@@ -78,29 +78,29 @@ const Dashboard = () => {
 
   return (
     <PageTransition>
-      <div className="px-4 pt-4 pb-6 space-y-5">
+      <main className="px-4 pt-4 pb-6 space-y-5" aria-label="Tableau de bord de suivi">
         {/* Header */}
         <div className="flex items-center justify-between">
-          <button onClick={() => navigate("/home")} className="p-2 -ml-2" aria-label="Retour"><ArrowLeft className="w-5 h-5" /></button>
+          <button onClick={() => navigate("/home")} className="p-2 -ml-2 min-h-11 min-w-11 flex items-center justify-center" aria-label="Retour à l'accueil"><ArrowLeft className="w-5 h-5" aria-hidden="true" /></button>
           <h1 className="text-lg font-bold truncate">Tableau de bord</h1>
-          <button className="relative p-2 -mr-2" onClick={() => navigate("/notifications")} aria-label="Notifications">
-            <Bell className="w-5 h-5 text-muted-foreground" />
-            {unreadCount > 0 && <span className="absolute -top-0.5 -right-0.5 min-w-[18px] h-[18px] px-1 rounded-full bg-destructive text-destructive-foreground text-[10px] font-bold flex items-center justify-center">{unreadCount > 9 ? "9+" : unreadCount}</span>}
+          <button className="relative p-2 -mr-2 min-h-11 min-w-11 flex items-center justify-center" onClick={() => navigate("/notifications")} aria-label={unreadCount > 0 ? `Notifications, ${unreadCount} non lue(s)` : "Notifications"}>
+            <Bell className="w-5 h-5 text-muted-foreground" aria-hidden="true" />
+            {unreadCount > 0 && <span className="absolute top-0.5 right-0.5 min-w-[18px] h-[18px] px-1 rounded-full bg-destructive text-destructive-foreground text-[10px] font-bold flex items-center justify-center" aria-hidden="true">{unreadCount > 9 ? "9+" : unreadCount}</span>}
           </button>
         </div>
 
         {/* Child summary */}
-        <button className="medical-card flex items-center gap-3 bg-accent w-full text-left" onClick={() => navigate("/child-profile")}>
-          <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center shrink-0"><Baby className="w-5 h-5 text-primary" /></div>
+        <button className="medical-card flex items-center gap-3 bg-accent w-full text-left" onClick={() => navigate("/child-profile")} aria-label={`Profil de ${firstChild.first_name}, ${childAge}`}>
+          <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center shrink-0"><Baby className="w-5 h-5 text-primary" aria-hidden="true" /></div>
           <div className="flex-1 min-w-0">
             <p className="font-semibold text-sm truncate">{firstChild.first_name}</p>
             <p className="text-xs text-muted-foreground truncate">{childAge}{coparents.length > 1 ? ` · ${coparents.length} parents connectés` : ""}</p>
           </div>
-          <ChevronRight className="w-4 h-4 text-muted-foreground shrink-0" />
+          <ChevronRight className="w-4 h-4 text-muted-foreground shrink-0" aria-hidden="true" />
         </button>
 
         {/* KPI Grid */}
-        <div className="grid grid-cols-2 gap-3">
+        <div className="grid grid-cols-2 gap-3" role="region" aria-label="Indicateurs clés du jour" aria-live="polite">
           <KpiCard icon={Moon} tone="primary" label="Sommeil 24h" value={`${Math.floor(sleepToday / 60)}h${String(sleepToday % 60).padStart(2, "0")}`} sub={`${sleepLogs.filter((l) => new Date(l.start_at).toDateString() === today).length} sessions`} />
           <KpiCard icon={Milk} tone="green" label="Dernier repas" value={lastFeedAgo != null ? (lastFeedAgo < 60 ? `${lastFeedAgo} min` : `${Math.floor(lastFeedAgo / 60)}h${String(lastFeedAgo % 60).padStart(2, "0")}`) : "—"} sub={`${feedingsToday.length} aujourd'hui`} />
           <KpiCard icon={Droplet} tone="orange" label="Couches" value={String(diapersToday)} sub="aujourd'hui" />
@@ -110,12 +110,12 @@ const Dashboard = () => {
         </div>
 
         {/* Growth chart */}
-        <section className="medical-card space-y-3">
+        <section className="medical-card space-y-3" aria-label="Courbe de croissance">
           <div className="flex items-center justify-between">
             <h2 className="text-sm font-bold">Croissance</h2>
-            <div className="flex gap-1 bg-muted rounded-lg p-0.5">
+            <div className="flex gap-1 bg-muted rounded-lg p-0.5" role="tablist" aria-label="Type de mesure">
               {(["weight", "height"] as const).map((k) => (
-                <button key={k} onClick={() => setGrowthKind(k)} className={`px-3 py-1 text-[11px] font-semibold rounded-md ${growthKind === k ? "bg-card text-foreground shadow-sm" : "text-muted-foreground"}`}>
+                <button key={k} role="tab" aria-selected={growthKind === k} onClick={() => setGrowthKind(k)} className={`px-3 py-1.5 text-[11px] font-semibold rounded-md min-h-11 ${growthKind === k ? "bg-card text-foreground shadow-sm" : "text-muted-foreground"}`}>
                   {k === "weight" ? "Poids" : "Taille"}
                 </button>
               ))}
@@ -129,52 +129,52 @@ const Dashboard = () => {
         </section>
 
         {/* Sleep chart */}
-        <section className="medical-card space-y-2">
-          <div className="flex items-center gap-2"><Moon className="w-4 h-4 text-primary" /><h2 className="text-sm font-bold">Sommeil 14 jours</h2></div>
+        <section className="medical-card space-y-2" aria-label="Graphique du sommeil sur 14 jours">
+          <div className="flex items-center gap-2"><Moon className="w-4 h-4 text-primary" aria-hidden="true" /><h2 className="text-sm font-bold">Sommeil 14 jours</h2></div>
           <SleepChart logs={sleepLogs} />
         </section>
 
         {/* Feeding */}
-        <section className="medical-card space-y-2">
-          <div className="flex items-center gap-2"><Milk className="w-4 h-4 text-success" /><h2 className="text-sm font-bold">Alimentation 7 jours</h2></div>
+        <section className="medical-card space-y-2" aria-label="Graphique de l'alimentation sur 7 jours">
+          <div className="flex items-center gap-2"><Milk className="w-4 h-4 text-success" aria-hidden="true" /><h2 className="text-sm font-bold">Alimentation 7 jours</h2></div>
           {feedingLogs.length > 0 ? <FeedingCharts logs={feedingLogs} /> : <p className="text-xs text-muted-foreground text-center py-6">Aucun repas enregistré</p>}
         </section>
 
         {/* Milestones radar */}
-        <section className="medical-card space-y-2">
-          <div className="flex items-center gap-2"><Target className="w-4 h-4 text-primary" /><h2 className="text-sm font-bold">Jalons par domaine</h2></div>
+        <section className="medical-card space-y-2" aria-label="Radar des jalons de développement par domaine">
+          <div className="flex items-center gap-2"><Target className="w-4 h-4 text-primary" aria-hidden="true" /><h2 className="text-sm font-bold">Jalons par domaine</h2></div>
           <MilestoneRadar milestones={milestones} />
         </section>
 
         {/* Diaper heatmap */}
-        <section className="medical-card space-y-2">
-          <div className="flex items-center gap-2"><Activity className="w-4 h-4 text-medical-orange" /><h2 className="text-sm font-bold">Couches (7 derniers jours)</h2></div>
+        <section className="medical-card space-y-2" aria-label="Fréquence des changes sur 7 jours">
+          <div className="flex items-center gap-2"><Activity className="w-4 h-4 text-medical-orange" aria-hidden="true" /><h2 className="text-sm font-bold">Couches (7 derniers jours)</h2></div>
           {diaperLogs.length > 0 ? <DiaperHeatmap logs={diaperLogs} /> : <p className="text-xs text-muted-foreground text-center py-6">Aucune couche enregistrée</p>}
         </section>
 
         {/* Upcoming */}
-        <section className="space-y-2">
+        <section className="space-y-2" aria-label="Prochains rendez-vous">
           <div className="flex items-center justify-between">
             <h2 className="text-sm font-bold">Prochains rendez-vous</h2>
-            <button className="text-xs font-semibold text-primary" onClick={() => navigate("/appointments")}>Voir tous</button>
+            <button className="text-xs font-semibold text-primary min-h-11 px-2" onClick={() => navigate("/appointments")}>Voir tous</button>
           </div>
           {upcomingAppts.length > 0 ? upcomingAppts.map((r) => (
-            <div key={r.id} className="medical-card flex items-center gap-3 cursor-pointer active:scale-[0.98]" onClick={() => navigate("/appointments")}>
-              <div className="w-9 h-9 rounded-xl bg-medical-light-blue flex items-center justify-center shrink-0"><Calendar className="w-4 h-4 text-primary" /></div>
+            <button key={r.id} className="medical-card flex items-center gap-3 cursor-pointer active:scale-[0.98] w-full text-left" onClick={() => navigate("/appointments")} aria-label={`Rendez-vous ${r.name}, ${formatApptDate(r.visit_date!, r.visit_time)}`}>
+              <div className="w-9 h-9 rounded-xl bg-medical-light-blue flex items-center justify-center shrink-0"><Calendar className="w-4 h-4 text-primary" aria-hidden="true" /></div>
               <div className="flex-1 min-w-0">
                 <p className="font-semibold text-sm truncate">{r.name}</p>
                 <p className="text-xs text-muted-foreground truncate">{formatApptDate(r.visit_date!, r.visit_time)}</p>
               </div>
-              <ChevronRight className="w-4 h-4 text-muted-foreground shrink-0" />
-            </div>
+              <ChevronRight className="w-4 h-4 text-muted-foreground shrink-0" aria-hidden="true" />
+            </button>
           )) : (
             <div className="medical-card text-center py-4">
               <p className="text-xs text-muted-foreground mb-2">Aucun rendez-vous à venir</p>
-              <button className="text-xs font-semibold text-primary" onClick={() => navigate("/appointments")}>Planifier</button>
+              <button className="text-xs font-semibold text-primary min-h-11 px-4" onClick={() => navigate("/appointments")}>Planifier</button>
             </div>
           )}
         </section>
-      </div>
+      </main>
     </PageTransition>
   );
 };
