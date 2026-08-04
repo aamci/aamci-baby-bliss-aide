@@ -1,0 +1,187 @@
+export interface MedicalNewsItem {
+  slug: string;
+  title: string;
+  summary: string;
+  body: string;
+  category: string;
+  source: string;
+  sourceUrl: string;
+  publishedAt: string; // ISO date
+  ageMinMonths: number;
+  ageMaxMonths: number;
+  readingMin: number;
+}
+
+export const NEWS_CATEGORIES = [
+  { value: "all", label: "Toutes" },
+  { value: "0-4-ans", label: "0-4 ans" },
+  { value: "nutrition", label: "Nutrition" },
+  { value: "sommeil", label: "Sommeil" },
+  { value: "vaccination", label: "Vaccination" },
+  { value: "developpement", label: "Développement" },
+  { value: "securite", label: "Sécurité" },
+] as const;
+
+export const MEDICAL_NEWS: MedicalNewsItem[] = [
+  {
+    slug: "calendrier-vaccinal-2026",
+    title: "Calendrier vaccinal 2026 : ce qui change pour les nourrissons",
+    summary: "Le ministère de la Santé a publié le nouveau calendrier vaccinal. Les 11 vaccins obligatoires avant 2 ans restent inchangés, avec des précisions sur les rattrapages.",
+    body: "Le calendrier vaccinal 2026 confirme l'obligation des 11 vaccins pour les enfants nés depuis le 1er janvier 2018 : Diphtérie-Tétanos-Poliomyélite (DTP), Coqueluche, Haemophilus influenzae b, Hépatite B, Pneumocoque, Méningocoque C, et Rougeole-Oreillons-Rubéole (ROR).\n\nLes injections se répartissent aux âges clés : 2, 4, 5, 11, 12 et 16-18 mois. Le rappel ROR, désormais fixé entre 16 et 18 mois, doit être réalisé avant l'entrée en collectivité.\n\nEn cas de retard, un schéma de rattrapage simplifié est possible. Parlez-en à votre médecin traitant ou à votre pédiatre lors de la prochaine visite obligatoire. Le carnet de santé de votre enfant doit être présenté à chaque vaccination.\n\nSource : Ministère de la Santé et Santé publique France.",
+    category: "vaccination",
+    source: "Santé publique France",
+    sourceUrl: "https://www.santepubliquefrance.fr",
+    publishedAt: "2026-01-15",
+    ageMinMonths: 0,
+    ageMaxMonths: 24,
+    readingMin: 3,
+  },
+  {
+    slug: "diversification-alimentaire-4-6-mois",
+    title: "Diversification alimentaire : la HAS actualise ses recommandations",
+    summary: "La Haute Autorité de Santé recommande d'introduire les aliments solides entre 4 et 6 mois, sans jamais avant 4 mois révolus, et précise l'introduction des allergènes.",
+    body: "La diversification alimentaire débute entre 4 et 6 mois révolus, jamais avant 4 mois. La Haute Autorité de Santé (HAS) confirme que l'introduction précoce et progressive des allergènes (œuf, arachide, poisson, gluten) entre 4 et 12 mois réduit le risque d'allergies alimentaires.\n\nLes recommandations clés :\n- Commencer par des purées lisses de légumes et des compotes sans sucre ajouté\n- Introduire un seul nouvel aliment à la fois, pendant 3 jours consécutifs\n- Proposer les allergènes le matin, en petites quantités, pour surveiller toute réaction\n- Maintenir l'allaitement ou le lait infantile comme aliment principal jusqu'à 12 mois\n- Ne jamais ajouter de sel avant 12 mois et limiter le sucre avant 3 ans\n\nLe médecin traitant ou le pédiatre accompagne les parents à chaque étape, notamment lors des visites obligatoires des 4e, 5e et 6e mois.",
+    category: "nutrition",
+    source: "HAS — Haute Autorité de Santé",
+    sourceUrl: "https://www.has-sante.fr",
+    publishedAt: "2026-02-03",
+    ageMinMonths: 3,
+    ageMaxMonths: 12,
+    readingMin: 4,
+  },
+  {
+    slug: "sommeil-nourrisson-recommandations",
+    title: "Sommeil du nourrisson : les règles de sécurité à respecter",
+    summary: "Coucher bébé sur le dos, dans un lit vide, à température adaptée : les recommandations officielles pour réduire le risque de mort inattendue du nourrisson.",
+    body: "La mort inattendue du nourrisson (MIN) reste la première cause de mortalité entre 1 mois et 1 an. Santé publique France rappelle les mesures de prévention validées scientifiquement :\n\n- Coucher bébé sur le DOS, jamais sur le ventre ni sur le côté\n- Utiliser un matelas ferme, sans tour de lit, couverture, doudou volumineux ou peluche\n- Préférer la turbulette (gigoteuse) adaptée à la taille de l'enfant\n- Maintenir la chambre entre 18 et 20 °C\n- Ne pas fumer pendant la grossesse ni dans l'environnement de l'enfant\n- Éviter le cododo dans le lit parental, surtout avant 6 mois\n- L'allaitement maternel est associé à une réduction du risque\n\nLe sommeil du nourrisson évolue : environ 16 à 18 heures par jour à la naissance, réparties en cycles courts, puis une consolidation nocturne progressive entre 3 et 6 mois. Chaque enfant a son rythme : consultez votre médecin si vous vous inquiétez.",
+    category: "sommeil",
+    source: "Santé publique France",
+    sourceUrl: "https://www.santepubliquefrance.fr",
+    publishedAt: "2026-01-28",
+    ageMinMonths: 0,
+    ageMaxMonths: 12,
+    readingMin: 4,
+  },
+  {
+    slug: "visites-medicales-obligatoires-rappel",
+    title: "Les 14 visites médicales obligatoires avant 6 ans : le rappel officiel",
+    summary: "Le carnet de santé prévoit 14 examens médicaux obligatoires entre la naissance et 6 ans. Le point sur le calendrier et leur contenu.",
+    body: "Le suivi médical de l'enfant comprend 14 visites obligatoires entre la naissance et 6 ans, dont 9 concentrées sur les 2 premières années. Ces examens sont pris en charge à 100 % par l'Assurance Maladie.\n\nLe calendrier officiel :\n1. Dans les 8 premiers jours\n2. 1er mois\n3. 2e mois\n4. 3e mois\n5. 4e mois\n6. 5e mois\n7. 6e mois\n8. 9e mois\n9. 12e mois\n10. Entre 16 et 18 mois\n11. 24e mois (2 ans)\n12. 3 ans\n13. 4 ans\n14. 5-6 ans\n\nChaque visite comprend : mesures (poids, taille, périmètre crânien), examen clinique complet, vérification des vaccinations, évaluation du développement psychomoteur et échange avec les parents. Les certificats de santé des 8e jour, 9e et 24e mois doivent être transmis à la CAF.\n\nNe manquez aucune visite : elles permettent de dépister précocement d'éventuels troubles du développement, de la vision ou de l'audition.",
+    category: "0-4-ans",
+    source: "Ameli — Assurance Maladie",
+    sourceUrl: "https://www.ameli.fr",
+    publishedAt: "2026-01-10",
+    ageMinMonths: 0,
+    ageMaxMonths: 48,
+    readingMin: 4,
+  },
+  {
+    slug: "ecrans-avant-3-ans-alerte",
+    title: "Écrans avant 3 ans : les autorités sanitaires renforcent leur alerte",
+    summary: "Pas d'écran avant 3 ans, pas de télévision en fond sonore : les recommandations officielles pour protéger le développement du jeune enfant.",
+    body: "L'exposition précoce et excessive aux écrans est associée à des retards de langage, des troubles de l'attention, du sommeil et du comportement. Les autorités sanitaires françaises recommandent :\n\n- AUCUN écran avant 3 ans, y compris en fond sonore dans la pièce\n- Entre 3 et 6 ans : usage exceptionnel, limité, accompagné par un adulte, sur des contenus adaptés\n- Pas d'écran pendant les repas ni dans l'heure précédant le coucher\n- Privilégier les interactions directes : lecture, jeux, chansons, sorties\n\nLe langage de l'enfant se construit par les échanges avec les adultes : parler, chanter, lire des histoires stimule son développement bien plus que n'importe quel programme, même « éducatif ».\n\nEn cas d'inquiétude sur le développement du langage de votre enfant, parlez-en lors de la prochaine visite médicale obligatoire.",
+    category: "developpement",
+    source: "Santé publique France",
+    sourceUrl: "https://www.santepubliquefrance.fr",
+    publishedAt: "2026-02-18",
+    ageMinMonths: 0,
+    ageMaxMonths: 48,
+    readingMin: 3,
+  },
+  {
+    slug: "securite-domestique-enfant",
+    title: "Accidents domestiques : 80 % sont évitables chez les moins de 4 ans",
+    summary: "Chutes, intoxications, noyades : les accidents de la vie courante sont la première cause d'hospitalisation des jeunes enfants. Les gestes de prévention essentiels.",
+    body: "Les accidents de la vie courante touchent chaque année des centaines de milliers d'enfants. La grande majorité est évitable avec des mesures simples :\n\n**Chutes** : ne jamais laisser un enfant seul sur une table à langer, un lit ou un canapé ; sécuriser les fenêtres et escaliers avec des barrières.\n\n**Intoxications** : ranger médicaments, produits ménagers et boutons de cigarette hors de portée et dans leur emballage d'origine ; ne jamais présenter un médicament comme un bonbon.\n\n**Noyades** : la surveillance d'un adulte à portée de bras est indispensable à chaque bain et près de tout point d'eau, même peu profond. Un enfant peut se noyer en 30 secondes dans 10 cm d'eau.\n\n**Brûlures** : tourner les poignées des casseroles, éloigner les boissons chaudes, vérifier la température du bain (37 °C).\n\nEn cas d'accident : SAMU 15, pompiers 18, numéro d'urgence européen 112.",
+    category: "securite",
+    source: "Ameli — Assurance Maladie",
+    sourceUrl: "https://www.ameli.fr",
+    publishedAt: "2026-03-02",
+    ageMinMonths: 0,
+    ageMaxMonths: 48,
+    readingMin: 4,
+  },
+  {
+    slug: "allaitement-recommandations-oms",
+    title: "Allaitement maternel : l'OMS recommande l'exclusivité jusqu'à 6 mois",
+    summary: "L'allaitement exclusif jusqu'à 6 mois et poursuivi jusqu'à 2 ans ou plus reste la recommandation de l'Organisation mondiale de la santé.",
+    body: "L'Organisation mondiale de la santé (OMS) recommande l'allaitement maternel exclusif pendant les 6 premiers mois de vie, puis son maintien avec une alimentation complémentaire jusqu'à 2 ans ou plus.\n\nLes bénéfices documentés incluent : protection contre les infections (otites, gastro-entérites, bronchiolites), réduction du risque d'allergies, d'obésité et de diabète, et effet protecteur pour la mère (cancers du sein et de l'ovaire).\n\nEn France, le congé maternité, les pauses d'allaitement au travail et l'accompagnement par les sages-femmes et les PMI facilitent la poursuite de l'allaitement. Des tire-lait sont remboursés par l'Assurance Maladie sur prescription.\n\nL'allaitement est un choix personnel : quelle que soit votre décision, votre médecin ou votre sage-femme vous accompagne sans jugement. Le plus important est un bébé nourri et une mère sereine.",
+    category: "nutrition",
+    source: "OMS / Ameli",
+    sourceUrl: "https://www.ameli.fr",
+    publishedAt: "2026-01-22",
+    ageMinMonths: 0,
+    ageMaxMonths: 24,
+    readingMin: 3,
+  },
+  {
+    slug: "bronchiolite-vigilance-hiver",
+    title: "Bronchiolite : les gestes barrières restent essentiels chez les nourrissons",
+    summary: "Lavage des mains, aération, limitation des contacts : les mesures de prévention de la bronchiolite du nourrisson à l'approche de l'hiver.",
+    body: "La bronchiolite est une infection respiratoire fréquente chez les moins de 2 ans, causée principalement par le virus respiratoire syncytial (VRS). La plupart des cas sont bénins, mais elle peut nécessiter une hospitalisation chez les nourrissons, surtout avant 3 mois.\n\nLes gestes de prévention validés :\n- Se laver les mains avant chaque contact avec bébé\n- Aérer la chambre et les pièces de vie 10 minutes matin et soir\n- Éviter les lieux confinés et bondés avec un nourrisson en période épidémique\n- Ne pas partager biberons, sucettes ou couverts sans lavage\n- Éloigner les personnes malades, y compris les frères et sœurs\n\nUn traitement préventif (anticorps monoclonal) est proposé aux nouveau-nés et nourrissons à risque pendant la saison épidémique. Demandez conseil à votre médecin ou à la maternité.\n\nConsultez en urgence si votre bébé respire vite, geint, refuse de s'alimenter ou si ses côtes s'enfoncent à chaque inspiration.",
+    category: "0-4-ans",
+    source: "Santé publique France",
+    sourceUrl: "https://www.santepubliquefrance.fr",
+    publishedAt: "2025-10-20",
+    ageMinMonths: 0,
+    ageMaxMonths: 24,
+    readingMin: 4,
+  },
+  {
+    slug: "langage-etapes-developpement",
+    title: "Développement du langage : les étapes clés de 0 à 4 ans",
+    summary: "Babillage, premiers mots, phrases : le repérage des étapes du langage permet un dépistage précoce des éventuels retards.",
+    body: "Le langage se construit progressivement, avec des variations normales d'un enfant à l'autre. Les étapes repères :\n\n- 3-6 mois : babillage, gazouillis, sourires-réponses\n- 9-12 mois : comprend « non », pointe, dit « papa/maman »\n- 18 mois : environ 20 mots, comprend les consignes simples\n- 24 mois : associe 2 mots (« encore lait »), vocabulaire d'environ 50 à 300 mots\n- 3 ans : phrases de 3 mots et plus, langage compréhensible par l'entourage\n- 4 ans : raconte des histoires, pose des questions, se fait comprendre de tous\n\nLes signes qui doivent conduire à consulter : absence de babillage à 9 mois, pas de mot à 18 mois, pas de phrase de 2 mots à 24 mois, langage incompréhensible à 3 ans, ou toute régression.\n\nLes visites obligatoires des 9e, 12e et 24e mois incluent l'évaluation du langage. Un dépistage précoce permet une prise en charge efficace (orthophonie, guidance parentale).",
+    category: "developpement",
+    source: "HAS — Haute Autorité de Santé",
+    sourceUrl: "https://www.has-sante.fr",
+    publishedAt: "2026-03-10",
+    ageMinMonths: 3,
+    ageMaxMonths: 48,
+    readingMin: 4,
+  },
+  {
+    slug: "sieste-rythme-enfant",
+    title: "La sieste : jusqu'à quel âge et comment l'organiser ?",
+    summary: "Indispensable à la récupération et au développement, la sieste évolue avec l'âge : repères pratiques de la naissance à 4 ans.",
+    body: "La sieste fait partie intégrante des besoins de sommeil de l'enfant. Les repères moyens :\n\n- 0-3 mois : 3 à 4 siestes par jour, durées variables\n- 3-9 mois : transition vers 2 puis 3 siestes régulières\n- 9-18 mois : 2 siestes (matin et après-midi)\n- 18 mois - 3 ans : 1 sieste après le déjeuner (1 à 2 heures)\n- 3-4 ans : la sieste peut disparaître progressivement, un temps calme reste bénéfique\n\nConseils pratiques : installez un rituel court et identique chaque jour, couchez l'enfant aux mêmes horaires, dans une pièce fraîche et dans le noir ou la pénombre. Respectez les signaux de fatigue (frottement des yeux, bâillements, grognements).\n\nUne sieste trop tardive peut retarder l'endormissement du soir : après 3 ans, évitez de réveiller l'enfant après 16h30. Si votre enfant refuse systématiquement la sieste mais reste en forme et dort bien la nuit, ne forcez pas.",
+    category: "sommeil",
+    source: "mpedia / Ameli",
+    sourceUrl: "https://www.mpedia.fr",
+    publishedAt: "2026-02-25",
+    ageMinMonths: 0,
+    ageMaxMonths: 48,
+    readingMin: 3,
+  },
+  {
+    slug: "vitamine-d-supplementation",
+    title: "Vitamine D : une supplémentation recommandée pour tous les enfants",
+    summary: "La vitamine D est indispensable à la minéralisation osseuse. La supplémentation est recommandée de la naissance à l'adolescence, avec des doses adaptées à l'âge et à l'alimentation.",
+    body: "La vitamine D assure la fixation du calcium sur les os et prévient le rachitisme. En France, l'exposition solaire seule ne suffit pas, surtout d'octobre à mars. La supplémentation systématique est recommandée :\n\n- Nourrissons allaités : 1000 à 1200 UI/jour\n- Nourrissons au lait infantile : 600 à 800 UI/jour (adapter selon la quantité de lait)\n- Enfants de 18 mois à l'adolescence : 2 à 3 ampoules de 80 000 à 100 000 UI par an (novembre-février)\n\nLe médecin traitant adapte la prescription lors des visites obligatoires. Respectez la dose prescrite : un surdosage est toxique. Ne cumulez jamais plusieurs produits contenant de la vitamine D sans avis médical.\n\nLa supplémentation ne dispense pas d'une alimentation équilibrée et d'une activité physique régulière dès le plus jeune âge.",
+    category: "nutrition",
+    source: "Ameli — Assurance Maladie",
+    sourceUrl: "https://www.ameli.fr",
+    publishedAt: "2026-01-05",
+    ageMinMonths: 0,
+    ageMaxMonths: 48,
+    readingMin: 3,
+  },
+  {
+    slug: "fievre-enfant-conduite",
+    title: "Fièvre de l'enfant : quand consulter et comment réagir",
+    summary: "La fièvre est fréquente et souvent bénigne, mais certains signes imposent une consultation rapide. Le point sur la conduite à tenir.",
+    body: "La fièvre est définie par une température corporelle supérieure à 38 °C. C'est une réaction de défense naturelle, très fréquente chez l'enfant. La conduite à tenir :\n\n**À la maison** : déshabiller l'enfant, le faire boire régulièrement, ne pas surchauffer la pièce. Le paracétamol peut être utilisé selon le poids de l'enfant (15 mg/kg toutes les 6 heures si inconfort), jamais d'aspirine ni d'ibuprofène avant 3 mois.\n\n**Consultez rapidement si** : votre enfant a moins de 3 mois, la fièvre dépasse 39,5 °C, dure plus de 48 heures, ou s'accompagne d'une éruption cutanée, de vomissements répétés, d'une gêne respiratoire, d'une raideur de la nuque ou d'une altération de l'état général (enfant apathique, ne sourit plus).\n\n**Urgence (15 ou 112)** : convulsions prolongées, difficulté à réveiller l'enfant, taches violacées qui ne s'effacent pas à la pression.\n\nLes visites médicales sont l'occasion d'apprendre à reconnaître ces signes avec votre médecin.",
+    category: "0-4-ans",
+    source: "Ameli — Assurance Maladie",
+    sourceUrl: "https://www.ameli.fr",
+    publishedAt: "2026-03-15",
+    ageMinMonths: 0,
+    ageMaxMonths: 48,
+    readingMin: 4,
+  },
+];
+
+export function filterNewsByAge(news: MedicalNewsItem[], childAgeMonths: number | null): MedicalNewsItem[] {
+  if (childAgeMonths == null) return news;
+  return news.filter((n) => childAgeMonths >= n.ageMinMonths && childAgeMonths <= n.ageMaxMonths);
+}
