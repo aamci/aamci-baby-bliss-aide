@@ -7,9 +7,18 @@ export type TTSLanguage = "fr" | "en" | "es" | "ar";
 
 const VOICE_KEY = "bebesante_tts_voice";
 const LANG_KEY = "bebesante_tts_language";
+const SPEED_KEY = "bebesante_tts_speed";
 
 export const DEFAULT_VOICE: TTSVoice = "shimmer";
 export const DEFAULT_LANGUAGE: TTSLanguage = "fr";
+export const DEFAULT_SPEED = 1.0;
+
+export const SPEED_OPTIONS: { value: number; label: string }[] = [
+  { value: 0.75, label: "Lente (0,75×)" },
+  { value: 1.0, label: "Normale (1×)" },
+  { value: 1.25, label: "Rapide (1,25×)" },
+  { value: 1.5, label: "Très rapide (1,5×)" },
+];
 
 export const VOICE_OPTIONS: { value: TTSVoice; label: string; gender: "f" | "m" }[] = [
   { value: "shimmer", label: "Claire (F, douce)", gender: "f" },
@@ -49,18 +58,31 @@ export function setStoredLanguage(l: TTSLanguage) {
   window.dispatchEvent(new Event("tts-settings-changed"));
 }
 
+export function getStoredSpeed(): number {
+  if (typeof window === "undefined") return DEFAULT_SPEED;
+  const v = parseFloat(localStorage.getItem(SPEED_KEY) || "");
+  return isNaN(v) ? DEFAULT_SPEED : v;
+}
+
+export function setStoredSpeed(s: number) {
+  localStorage.setItem(SPEED_KEY, String(s));
+  window.dispatchEvent(new Event("tts-settings-changed"));
+}
+
 export function useTTSSettings() {
   const [voice, setV] = useState<TTSVoice>(getStoredVoice);
   const [language, setL] = useState<TTSLanguage>(getStoredLanguage);
+  const [speed, setS] = useState<number>(getStoredSpeed);
   useEffect(() => {
     const h = () => {
       setV(getStoredVoice());
       setL(getStoredLanguage());
+      setS(getStoredSpeed());
     };
     window.addEventListener("tts-settings-changed", h);
     return () => window.removeEventListener("tts-settings-changed", h);
   }, []);
-  return { voice, language, setVoice: setStoredVoice, setLanguage: setStoredLanguage };
+  return { voice, language, speed, setVoice: setStoredVoice, setLanguage: setStoredLanguage, setSpeed: setStoredSpeed };
 }
 
 export function useTTS() {
@@ -103,8 +125,9 @@ export function useTTS() {
     try {
       const voice = getStoredVoice();
       const language = getStoredLanguage();
+      const speed = getStoredSpeed();
       const { data, error } = await supabase.functions.invoke("tts", {
-        body: { text, voice, language },
+        body: { text, voice, language, speed },
       });
       if (error) throw error;
       // supabase.functions.invoke returns a Blob for binary responses
@@ -113,6 +136,7 @@ export function useTTS() {
       urlRef.current = url;
       const audio = new Audio(url);
       audioRef.current = audio;
+      audio.playbackRate = 1; // speed is applied server-side; keep 1 as safety
       audio.onended = () => {
         setState("idle");
         cleanup();

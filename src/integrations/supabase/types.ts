@@ -478,6 +478,30 @@ export type Database = {
           },
         ]
       }
+      news_read_history: {
+        Row: {
+          action: string
+          created_at: string
+          id: string
+          news_slug: string
+          user_id: string
+        }
+        Insert: {
+          action?: string
+          created_at?: string
+          id?: string
+          news_slug: string
+          user_id: string
+        }
+        Update: {
+          action?: string
+          created_at?: string
+          id?: string
+          news_slug?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       profiles: {
         Row: {
           allergies: string[] | null

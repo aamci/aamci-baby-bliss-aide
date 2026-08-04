@@ -84,8 +84,8 @@ const CoParenting = () => {
       <div className="min-h-screen bg-background max-w-lg mx-auto pb-8">
         <div className="px-4 pt-6 pb-4">
           <div className="flex items-center gap-3 mb-6">
-            <button onClick={() => navigate(-1)} className="w-10 h-10 rounded-full bg-muted flex items-center justify-center" aria-label="Retour">
-              <ArrowLeft className="w-5 h-5 text-foreground" />
+            <button onClick={() => navigate(-1)} className="w-11 h-11 rounded-full bg-muted flex items-center justify-center" aria-label="Retour">
+              <ArrowLeft className="w-5 h-5 text-foreground" aria-hidden="true" />
             </button>
             <div>
               <h1 className="text-xl font-bold text-foreground">Co-parentalité</h1>
@@ -96,7 +96,7 @@ const CoParenting = () => {
           </div>
 
           {/* Current co-parents */}
-          <div className="medical-card space-y-3 mb-6">
+          <div className="medical-card space-y-3 mb-6" role="region" aria-label="Parents actifs">
             <h2 className="text-sm font-bold text-foreground">Parents actifs ({coparents.length || 1})</h2>
             {(coparents.length > 0 ? coparents : [{ parent_id: user?.id, role: "parent", profile: { first_name: parentName, last_name: "" } }]).map((cp: any) => {
               const name = cp.profile?.first_name ? `${cp.profile.first_name} ${cp.profile.last_name || ""}`.trim() : "Parent";
@@ -116,19 +116,19 @@ const CoParenting = () => {
 
           {/* Pending invites */}
           {pendingInvites.length > 0 && (
-            <div className="medical-card space-y-3 mb-6">
-              <h2 className="text-sm font-bold text-foreground flex items-center gap-2"><Clock className="w-4 h-4 text-medical-orange" /> Invitations en attente ({pendingInvites.length})</h2>
+            <div className="medical-card space-y-3 mb-6" role="region" aria-label="Invitations en attente" aria-live="polite">
+              <h2 className="text-sm font-bold text-foreground flex items-center gap-2"><Clock className="w-4 h-4 text-medical-orange" aria-hidden="true" /> Invitations en attente ({pendingInvites.length})</h2>
               {pendingInvites.map((inv: any) => {
                 const link = `${window.location.origin}/coparenting/accept?token=${inv.token}`;
                 return (
                   <div key={inv.id} className="flex items-center gap-3 p-2 rounded-lg bg-muted/50">
-                    <div className="w-9 h-9 rounded-xl bg-medical-light-orange flex items-center justify-center shrink-0"><Mail className="w-4 h-4 text-medical-orange" /></div>
+                    <div className="w-9 h-9 rounded-xl bg-medical-light-orange flex items-center justify-center shrink-0"><Mail className="w-4 h-4 text-medical-orange" aria-hidden="true" /></div>
                     <div className="flex-1 min-w-0">
                       <p className="text-xs font-semibold text-foreground truncate">{inv.invite_email || inv.invite_phone}</p>
                       <p className="text-[10px] text-muted-foreground">Envoyé le {new Date(inv.created_at).toLocaleDateString("fr-FR")}</p>
                     </div>
-                    <button onClick={() => { navigator.clipboard.writeText(link); toast.success("Lien copié !"); }} aria-label="Copier le lien" className="p-2 text-primary active:scale-95"><Copy className="w-4 h-4" /></button>
-                    <button onClick={() => revoke.mutate(inv.id, { onSuccess: () => toast.success("Invitation révoquée") })} aria-label="Révoquer" className="p-2 text-destructive active:scale-95"><X className="w-4 h-4" /></button>
+                    <button onClick={() => { navigator.clipboard.writeText(link); toast.success("Lien copié !"); }} aria-label={`Copier le lien d'invitation pour ${inv.invite_email || inv.invite_phone}`} className="p-2 min-h-11 min-w-11 flex items-center justify-center text-primary active:scale-95"><Copy className="w-4 h-4" aria-hidden="true" /></button>
+                    <button onClick={() => revoke.mutate(inv.id, { onSuccess: () => toast.success("Invitation révoquée") })} aria-label={`Révoquer l'invitation de ${inv.invite_email || inv.invite_phone}`} className="p-2 min-h-11 min-w-11 flex items-center justify-center text-destructive active:scale-95"><X className="w-4 h-4" aria-hidden="true" /></button>
                   </div>
                 );
               })}
@@ -146,16 +146,20 @@ const CoParenting = () => {
                 Le co-parent aura accès au profil complet{firstChild ? ` de ${firstChild.first_name}` : ""} et pourra contribuer au suivi médical.
               </p>
 
-              <div className="flex gap-2">
-                <button onClick={() => setInviteMethod("email")} className={`flex-1 py-2.5 rounded-xl text-sm font-medium flex items-center justify-center gap-1.5 transition-colors ${inviteMethod === "email" ? "bg-primary text-primary-foreground" : "bg-muted text-muted-foreground"}`}>
-                  <Mail className="w-4 h-4" /> Email
+              <div className="flex gap-2" role="tablist" aria-label="Méthode d'invitation">
+                <button role="tab" aria-selected={inviteMethod === "email"} onClick={() => setInviteMethod("email")} className={`flex-1 py-2.5 rounded-xl text-sm font-medium flex items-center justify-center gap-1.5 transition-colors min-h-11 ${inviteMethod === "email" ? "bg-primary text-primary-foreground" : "bg-muted text-muted-foreground"}`}>
+                  <Mail className="w-4 h-4" aria-hidden="true" /> Email
                 </button>
-                <button onClick={() => setInviteMethod("sms")} className={`flex-1 py-2.5 rounded-xl text-sm font-medium flex items-center justify-center gap-1.5 transition-colors ${inviteMethod === "sms" ? "bg-primary text-primary-foreground" : "bg-muted text-muted-foreground"}`}>
-                  <MessageSquare className="w-4 h-4" /> SMS
+                <button role="tab" aria-selected={inviteMethod === "sms"} onClick={() => setInviteMethod("sms")} className={`flex-1 py-2.5 rounded-xl text-sm font-medium flex items-center justify-center gap-1.5 transition-colors min-h-11 ${inviteMethod === "sms" ? "bg-primary text-primary-foreground" : "bg-muted text-muted-foreground"}`}>
+                  <MessageSquare className="w-4 h-4" aria-hidden="true" /> SMS
                 </button>
               </div>
 
+              <label htmlFor="invite-contact" className="sr-only">
+                {inviteMethod === "email" ? "Adresse email du co-parent" : "Numéro de téléphone du co-parent"}
+              </label>
               <input
+                id="invite-contact"
                 type={inviteMethod === "email" ? "email" : "tel"}
                 value={inviteValue}
                 onChange={(e) => setInviteValue(e.target.value)}

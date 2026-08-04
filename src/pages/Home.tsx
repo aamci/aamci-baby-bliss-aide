@@ -2,7 +2,7 @@ import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
 import { useChildren, useChildAge } from "@/hooks/useChildren";
 import { useAppointments } from "@/hooks/useAppointments";
-import { Baby, ChevronRight, Sparkles, Calendar, Clock } from "lucide-react";
+import { Baby, ChevronRight, Sparkles, Calendar, Clock, CalendarDays, Newspaper } from "lucide-react";
 import { motion } from "framer-motion";
 import { format, parseISO, isFuture, isToday, isTomorrow } from "date-fns";
 import { fr } from "date-fns/locale";
@@ -145,6 +145,41 @@ const Home = () => {
                   </button>
                 ))}
               </div>
+            </motion.div>
+          )}
+
+          {/* Quick access */}
+          {firstChild && (
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.62, duration: 0.5 }}
+              className="mt-3 w-full max-w-sm grid grid-cols-2 gap-2"
+            >
+              <button
+                onClick={() => navigate("/calendar")}
+                className="bg-card/80 backdrop-blur-sm rounded-2xl border border-border/50 p-3 flex items-center gap-2.5 text-left active:scale-[0.97] transition-transform"
+              >
+                <div className="w-8 h-8 rounded-xl bg-primary/10 flex items-center justify-center shrink-0">
+                  <CalendarDays className="w-4 h-4 text-primary" />
+                </div>
+                <div className="min-w-0">
+                  <p className="text-xs font-bold text-foreground">Calendrier</p>
+                  <p className="text-[10px] text-muted-foreground">Visites & vaccins</p>
+                </div>
+              </button>
+              <button
+                onClick={() => navigate("/news")}
+                className="bg-card/80 backdrop-blur-sm rounded-2xl border border-border/50 p-3 flex items-center gap-2.5 text-left active:scale-[0.97] transition-transform"
+              >
+                <div className="w-8 h-8 rounded-xl bg-medical-light-green flex items-center justify-center shrink-0">
+                  <Newspaper className="w-4 h-4 text-success" />
+                </div>
+                <div className="min-w-0">
+                  <p className="text-xs font-bold text-foreground">Actualités</p>
+                  <p className="text-[10px] text-muted-foreground">Santé 0-4 ans</p>
+                </div>
+              </button>
             </motion.div>
           )}
         </div>
