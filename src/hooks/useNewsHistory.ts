@@ -12,7 +12,7 @@ export const useNewsHistory = () => {
         .select("*")
         .order("created_at", { ascending: false });
       if (error) throw error;
-      return (data ?? []) as { id: string; news_slug: string; action: string; created_at: string }[];
+      return (data ?? []) as unknown as { id: string; news_slug: string; action: string; created_at: string }[];
     },
     enabled: !!user,
   });
