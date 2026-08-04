@@ -33,6 +33,8 @@ import Appointments from "./pages/Appointments";
 import Dashboard from "./pages/Dashboard";
 import DocumentAudit from "./pages/DocumentAudit";
 import AcceptInvite from "./pages/AcceptInvite";
+import News from "./pages/News";
+import MedicalCalendar from "./pages/MedicalCalendar";
 import Cgu from "./pages/legal/Cgu";
 import MentionsLegales from "./pages/legal/MentionsLegales";
 import Confidentialite from "./pages/legal/Confidentialite";
@@ -66,6 +68,8 @@ const App = () => (
               <Route path="/contents" element={<Contents />} />
               <Route path="/tracking" element={<Tracking />} />
               <Route path="/appointments" element={<Appointments />} />
+              <Route path="/calendar" element={<MedicalCalendar />} />
+              <Route path="/news" element={<News />} />
               <Route path="/profile" element={<Profile />} />
               <Route path="/assistant" element={<Assistant />} />
             </Route>

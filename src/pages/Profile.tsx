@@ -9,7 +9,7 @@ import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import PageTransition from "@/components/PageTransition";
 import ListenButton from "@/components/ListenButton";
-import { useTTSSettings, VOICE_OPTIONS, LANGUAGE_OPTIONS } from "@/hooks/useTTS";
+import { useTTSSettings, VOICE_OPTIONS, LANGUAGE_OPTIONS, SPEED_OPTIONS } from "@/hooks/useTTS";
 
 const Profile = () => {
   const navigate = useNavigate();
@@ -24,7 +24,7 @@ const Profile = () => {
   });
   const [allergyInput, setAllergyInput] = useState("");
   const [saving, setSaving] = useState(false);
-  const { voice, language, setVoice, setLanguage } = useTTSSettings();
+  const { voice, language, speed, setVoice, setLanguage, setSpeed } = useTTSSettings();
 
   useEffect(() => {
     if (profile) {
@@ -305,6 +305,22 @@ const Profile = () => {
             </select>
             <p className="text-[10px] text-muted-foreground mt-1">
               Dioula et Baoulé ne sont pas encore disponibles pour la synthèse vocale (aucun modèle actuel ne les supporte). Nous ajouterons ces langues dès qu'un modèle de qualité sera disponible.
+            </p>
+          </div>
+          <div>
+            <label htmlFor="tts-speed" className="text-xs font-semibold text-foreground block mb-1">Vitesse de lecture</label>
+            <select
+              id="tts-speed"
+              value={String(speed)}
+              onChange={(e) => setSpeed(parseFloat(e.target.value))}
+              className="w-full bg-muted rounded-xl px-4 py-2.5 text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-ring"
+            >
+              {SPEED_OPTIONS.map((s) => (
+                <option key={s.value} value={String(s.value)}>{s.label}</option>
+              ))}
+            </select>
+            <p className="text-[10px] text-muted-foreground mt-1">
+              Réduisez la vitesse pour une écoute plus posée (fatigue, apprentissage du français), augmentez-la pour parcourir plus vite.
             </p>
           </div>
           <div className="pt-1">
