@@ -34,6 +34,7 @@ import Dashboard from "./pages/Dashboard";
 import DocumentAudit from "./pages/DocumentAudit";
 import AcceptInvite from "./pages/AcceptInvite";
 import News from "./pages/News";
+import Messages from "./pages/Messages";
 import MedicalCalendar from "./pages/MedicalCalendar";
 import Cgu from "./pages/legal/Cgu";
 import MentionsLegales from "./pages/legal/MentionsLegales";
@@ -79,6 +80,7 @@ const App = () => (
             <Route path="/child-profile" element={<ProtectedRoute><ChildProfile /></ProtectedRoute>} />
             <Route path="/notification-settings" element={<ProtectedRoute><NotificationSettings /></ProtectedRoute>} />
             <Route path="/coparenting" element={<ProtectedRoute><CoParenting /></ProtectedRoute>} />
+            <Route path="/messages" element={<ProtectedRoute><Messages /></ProtectedRoute>} />
             <Route path="/coparenting/accept" element={<AcceptInvite />} />
             <Route path="/saved-contents" element={<ProtectedRoute><SavedContents /></ProtectedRoute>} />
             <Route path="/teleconsultation" element={<ProtectedRoute><Teleconsultation /></ProtectedRoute>} />

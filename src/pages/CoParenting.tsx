@@ -115,6 +115,19 @@ const CoParenting = () => {
           </div>
 
           {/* Pending invites */}
+          <button
+            onClick={() => navigate("/messages")}
+            className="w-full medical-card flex items-center gap-3 mb-6 text-left active:scale-[0.98] transition-transform"
+          >
+            <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center shrink-0">
+              <MessageSquare className="w-5 h-5 text-primary" aria-hidden="true" />
+            </div>
+            <div className="flex-1 min-w-0">
+              <p className="text-sm font-bold text-foreground">Messagerie</p>
+              <p className="text-xs text-muted-foreground truncate">Discuter avec les co-parents, le pro et partager des notes</p>
+            </div>
+          </button>
+
           {pendingInvites.length > 0 && (
             <div className="medical-card space-y-3 mb-6" role="region" aria-label="Invitations en attente" aria-live="polite">
               <h2 className="text-sm font-bold text-foreground flex items-center gap-2"><Clock className="w-4 h-4 text-medical-orange" aria-hidden="true" /> Invitations en attente ({pendingInvites.length})</h2>
