@@ -2,7 +2,7 @@ import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
 import { useChildren, useChildAge } from "@/hooks/useChildren";
 import { useAppointments } from "@/hooks/useAppointments";
-import { Baby, ChevronRight, Sparkles, Calendar, Clock, CalendarDays, Newspaper } from "lucide-react";
+import { Baby, ChevronRight, Sparkles, Calendar, Clock, CalendarDays, Newspaper, MessageCircle, Users } from "lucide-react";
 import { motion } from "framer-motion";
 import { format, parseISO, isFuture, isToday, isTomorrow } from "date-fns";
 import { fr } from "date-fns/locale";
@@ -178,6 +178,30 @@ const Home = () => {
                 <div className="min-w-0">
                   <p className="text-xs font-bold text-foreground">Actualités</p>
                   <p className="text-[10px] text-muted-foreground">Santé 0-4 ans</p>
+                </div>
+              </button>
+              <button
+                onClick={() => navigate("/messages")}
+                className="bg-card/80 backdrop-blur-sm rounded-2xl border border-border/50 p-3 flex items-center gap-2.5 text-left active:scale-[0.97] transition-transform"
+              >
+                <div className="w-8 h-8 rounded-xl bg-primary/10 flex items-center justify-center shrink-0">
+                  <MessageCircle className="w-4 h-4 text-primary" />
+                </div>
+                <div className="min-w-0">
+                  <p className="text-xs font-bold text-foreground">Messagerie</p>
+                  <p className="text-[10px] text-muted-foreground">Co-parents & pro</p>
+                </div>
+              </button>
+              <button
+                onClick={() => navigate("/coparenting")}
+                className="bg-card/80 backdrop-blur-sm rounded-2xl border border-border/50 p-3 flex items-center gap-2.5 text-left active:scale-[0.97] transition-transform"
+              >
+                <div className="w-8 h-8 rounded-xl bg-medical-light-orange flex items-center justify-center shrink-0">
+                  <Users className="w-4 h-4 text-medical-orange" />
+                </div>
+                <div className="min-w-0">
+                  <p className="text-xs font-bold text-foreground">Co-parentalité</p>
+                  <p className="text-[10px] text-muted-foreground">Inviter un parent</p>
                 </div>
               </button>
             </motion.div>
