@@ -43,11 +43,6 @@ export interface Reminder {
 }
 
 const addMonthsFloat = (date: Date, months: number) => addDays(date, Math.round(months * 30.4375));
-const startOfToday = () => {
-  const d = new Date();
-  d.setHours(0, 0, 0, 0);
-  return d;
-};
 
 export const useReminderStates = (childIds: string[]) => {
   const key = [...childIds].sort().join(",");
