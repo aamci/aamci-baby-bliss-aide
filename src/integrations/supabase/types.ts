@@ -650,6 +650,50 @@ export type Database = {
         }
         Relationships: []
       }
+      reminder_states: {
+        Row: {
+          child_id: string
+          completed_at: string | null
+          created_at: string
+          id: string
+          reminder_key: string
+          snoozed_until: string | null
+          status: string
+          updated_at: string
+          updated_by: string | null
+        }
+        Insert: {
+          child_id: string
+          completed_at?: string | null
+          created_at?: string
+          id?: string
+          reminder_key: string
+          snoozed_until?: string | null
+          status?: string
+          updated_at?: string
+          updated_by?: string | null
+        }
+        Update: {
+          child_id?: string
+          completed_at?: string | null
+          created_at?: string
+          id?: string
+          reminder_key?: string
+          snoozed_until?: string | null
+          status?: string
+          updated_at?: string
+          updated_by?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "reminder_states_child_id_fkey"
+            columns: ["child_id"]
+            isOneToOne: false
+            referencedRelation: "children"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       rgpd_requests: {
         Row: {
           created_at: string
