@@ -18,7 +18,7 @@ import {
 
 const CHANNELS: { id: MessageChannel; label: string; icon: typeof Users; hint: string }[] = [
   { id: "coparent", label: "Co-parents", icon: Users, hint: "Discussion entre les parents de l'enfant" },
-  { id: "pro", label: "Professionnel", icon: Stethoscope, hint: "Échanges et questions destinés au professionnel de santé" },
+  { id: "pro", label: "Questions au pro", icon: Stethoscope, hint: "Préparez ici vos questions pour la prochaine consultation. Ce canal n'est pas relié à un médecin : en cas d'urgence, appelez le 15." },
   { id: "note", label: "Notes", icon: StickyNote, hint: "Notes partagées sur l'enfant (traitements, habitudes...)" },
 ];
 
