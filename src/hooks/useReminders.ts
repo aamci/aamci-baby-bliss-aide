@@ -112,23 +112,19 @@ const buildMessage = (step: CareStep, childName: string, phase: ReminderPhase, o
 };
 
 /**
- * Calcule les rappels du parcours de soins pour un enfant (ou tous les enfants).
+ * Calcule les rappels du parcours de soins. Fonction pure, testable.
  * Les fenêtres sont volontairement larges et le ton non culpabilisant.
  */
-export const useReminders = (childId?: string) => {
-  const { data: children = [] } = useChildren();
-  const scoped = useMemo(
-    () => (childId ? children.filter((c) => c.id === childId) : children),
-    [children, childId]
-  );
-  const childIds = useMemo(() => scoped.map((c) => c.id), [scoped]);
-  const { data: states = [], isLoading } = useReminderStates(childIds);
-
-  const reminders = useMemo<Reminder[]>(() => {
-    const today = startOfToday();
+export const computeReminders = (
+  children: Child[],
+  states: ReminderState[],
+  now: Date = new Date()
+): Reminder[] => {
+    const today = new Date(now);
+    today.setHours(0, 0, 0, 0);
     const list: Reminder[] = [];
 
-    for (const child of scoped) {
+    for (const child of children) {
       const birth = parseISO(child.birth_date);
       for (const step of CARE_PLAN) {
         const idealDate = addMonthsFloat(birth, step.idealMonths);
@@ -179,7 +175,18 @@ export const useReminders = (childId?: string) => {
     }
 
     return list.sort((a, b) => a.sortWeight - b.sortWeight);
-  }, [scoped, states]);
+};
+
+export const useReminders = (childId?: string) => {
+  const { data: children = [] } = useChildren();
+  const scoped = useMemo(
+    () => (childId ? children.filter((c) => c.id === childId) : children),
+    [children, childId]
+  );
+  const childIds = useMemo(() => scoped.map((c) => c.id), [scoped]);
+  const { data: states = [], isLoading } = useReminderStates(childIds);
+
+  const reminders = useMemo<Reminder[]>(() => computeReminders(scoped, states), [scoped, states]);
 
   const active = reminders.filter((r) => r.isActionable);
   const upcoming = reminders.filter((r) => !r.isActionable && r.phase !== "done");
