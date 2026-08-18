@@ -581,6 +581,60 @@ export type Database = {
         }
         Relationships: []
       }
+      notification_preferences: {
+        Row: {
+          content_enabled: boolean
+          coparent_enabled: boolean
+          created_at: string
+          email_enabled: boolean
+          push_enabled: boolean
+          quiet_enabled: boolean
+          quiet_end: string
+          quiet_start: string
+          screening_enabled: boolean
+          sms_enabled: boolean
+          timezone: string
+          updated_at: string
+          user_id: string
+          vaccines_enabled: boolean
+          visits_enabled: boolean
+        }
+        Insert: {
+          content_enabled?: boolean
+          coparent_enabled?: boolean
+          created_at?: string
+          email_enabled?: boolean
+          push_enabled?: boolean
+          quiet_enabled?: boolean
+          quiet_end?: string
+          quiet_start?: string
+          screening_enabled?: boolean
+          sms_enabled?: boolean
+          timezone?: string
+          updated_at?: string
+          user_id: string
+          vaccines_enabled?: boolean
+          visits_enabled?: boolean
+        }
+        Update: {
+          content_enabled?: boolean
+          coparent_enabled?: boolean
+          created_at?: string
+          email_enabled?: boolean
+          push_enabled?: boolean
+          quiet_enabled?: boolean
+          quiet_end?: string
+          quiet_start?: string
+          screening_enabled?: boolean
+          sms_enabled?: boolean
+          timezone?: string
+          updated_at?: string
+          user_id?: string
+          vaccines_enabled?: boolean
+          visits_enabled?: boolean
+        }
+        Relationships: []
+      }
       profiles: {
         Row: {
           allergies: string[] | null
@@ -622,6 +676,50 @@ export type Database = {
           updated_at?: string
         }
         Relationships: []
+      }
+      push_notification_log: {
+        Row: {
+          body: string | null
+          child_id: string | null
+          created_at: string
+          dedupe_key: string
+          id: string
+          sent_at: string
+          title: string
+          url: string | null
+          user_id: string
+        }
+        Insert: {
+          body?: string | null
+          child_id?: string | null
+          created_at?: string
+          dedupe_key: string
+          id?: string
+          sent_at?: string
+          title: string
+          url?: string | null
+          user_id: string
+        }
+        Update: {
+          body?: string | null
+          child_id?: string | null
+          created_at?: string
+          dedupe_key?: string
+          id?: string
+          sent_at?: string
+          title?: string
+          url?: string | null
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "push_notification_log_child_id_fkey"
+            columns: ["child_id"]
+            isOneToOne: false
+            referencedRelation: "children"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       push_subscriptions: {
         Row: {
