@@ -30,6 +30,7 @@ import CoParenting from "./pages/CoParenting";
 import SavedContents from "./pages/SavedContents";
 import Teleconsultation from "./pages/Teleconsultation";
 import Appointments from "./pages/Appointments";
+import MyAppointments from "./pages/MyAppointments";
 import Dashboard from "./pages/Dashboard";
 import DocumentAudit from "./pages/DocumentAudit";
 import AcceptInvite from "./pages/AcceptInvite";
@@ -69,6 +70,7 @@ const App = () => (
               <Route path="/contents" element={<Contents />} />
               <Route path="/tracking" element={<Tracking />} />
               <Route path="/appointments" element={<Appointments />} />
+              <Route path="/my-appointments" element={<MyAppointments />} />
               <Route path="/calendar" element={<MedicalCalendar />} />
               <Route path="/news" element={<News />} />
               <Route path="/profile" element={<Profile />} />
