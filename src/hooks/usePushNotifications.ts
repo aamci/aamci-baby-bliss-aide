@@ -2,7 +2,10 @@ import { useState, useEffect, useCallback } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
 
-const VAPID_PUBLIC_KEY = import.meta.env.VITE_VAPID_PUBLIC_KEY;
+// Clé publique VAPID : publique par nature, elle peut vivre dans le bundle.
+const VAPID_PUBLIC_KEY =
+  import.meta.env.VITE_VAPID_PUBLIC_KEY ||
+  "BH4DOxFMa_HY2iSSIrO2qVgQkxNiB38aqXJfWT6yHM_ACfqSmockWVWnBz_cyXrZiBGNHFInI7xINn15aPozib8";
 
 function urlBase64ToUint8Array(base64String: string) {
   const padding = "=".repeat((4 - (base64String.length % 4)) % 4);
